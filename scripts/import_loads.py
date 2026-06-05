@@ -3,7 +3,7 @@
 import csv
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from decimal import Decimal, InvalidOperation
 
 import psycopg
@@ -111,6 +111,32 @@ def normalize_row(row: dict) -> dict:
     return normalized
 
 
+def get_anchor_offset_hours() -> int:
+    raw_value = os.getenv("LOADS_ANCHOR_OFFSET_HOURS", "24").strip()
+    try:
+        return int(raw_value)
+    except ValueError:
+        raise ValueError("LOADS_ANCHOR_OFFSET_HOURS must be a valid integer")
+
+
+def shift_load_datetimes(rows: list[dict], anchor_offset_hours: int) -> list[dict]:
+    if not rows:
+        return rows
+
+    earliest_pickup = min(row["pickup_datetime"] for row in rows)
+    target_anchor = datetime.now(timezone.utc) + timedelta(hours=anchor_offset_hours)
+    delta = target_anchor - earliest_pickup
+
+    shifted_rows = []
+    for row in rows:
+        shifted = dict(row)
+        shifted["pickup_datetime"] = row["pickup_datetime"] + delta
+        shifted["delivery_datetime"] = row["delivery_datetime"] + delta
+        shifted_rows.append(shifted)
+
+    return shifted_rows
+
+
 def upsert_loads(conn, rows):
     sql = """
     INSERT INTO loads (
@@ -169,13 +195,19 @@ def main():
     if not db_url:
         print(
             "ERROR: DATABASE_URL is required. "
-            "Set it in the environment or create a .env file from .env.example.",
+            "Set it in the environment or create a .env file from .env.template.",
             file=sys.stderr,
         )
         sys.exit(1)
 
     if not os.path.exists(csv_path):
         print(f"ERROR: CSV file not found: {csv_path}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        anchor_offset_hours = get_anchor_offset_hours()
+    except ValueError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
         sys.exit(1)
 
     parsed_rows = []
@@ -203,11 +235,16 @@ def main():
         print("No rows found in CSV. Nothing to import.")
         sys.exit(0)
 
+    shifted_rows = shift_load_datetimes(parsed_rows, anchor_offset_hours)
+
     try:
         with psycopg.connect(db_url) as conn:
             with conn.transaction():
-                upsert_loads(conn, parsed_rows)
-        print(f"Successfully imported {len(parsed_rows)} load(s) from {csv_path}.")
+                upsert_loads(conn, shifted_rows)
+        print(
+            f"Successfully imported {len(shifted_rows)} load(s) from {csv_path} "
+            # f"with pickup times shifted by anchor offset {anchor_offset_hours} hour(s)."
+        )
     except Exception as e:
         print(f"ERROR: Database import failed: {e}", file=sys.stderr)
         sys.exit(1)
