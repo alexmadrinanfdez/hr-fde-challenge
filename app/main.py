@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from psycopg.errors import CheckViolation, ForeignKeyViolation, UniqueViolation
 
-from app.db import get_connection
+from common.db import get_connection
 from app.schemas import CallCreate, CallCreateResponse, LoadOut
 
 
