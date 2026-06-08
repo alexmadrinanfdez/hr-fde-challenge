@@ -1,25 +1,7 @@
 import pandas as pd
 import streamlit as st
 
-from dashboard.queries import (
-    get_average_call_duration_by_outcome,
-    get_calls_by_hour,
-    get_core_funnel_metrics,
-    get_facility_transfer_rate,
-    get_negative_sentiment_by_outcome,
-    get_negative_sentiment_rate,
-    get_negotiation_metrics,
-    get_operational_metrics,
-    get_origin_facility_usage_by_hour,
-    get_qa_metrics,
-    get_recent_calls,
-    get_sentiment_distribution,
-    get_successful_destination_facility_usage,
-    get_successful_origin_facility_usage,
-    get_top_destination_facilities,
-    get_top_origin_facilities,
-    get_destination_facility_usage_by_hour,
-)
+import dashboard.queries as queries
 
 
 st.set_page_config(
@@ -28,10 +10,9 @@ st.set_page_config(
 )
 
 st.title("Inbound Carrier Sales Dashboard")
-st.caption("Phase 3 reporting dashboard powered by PostgreSQL")
 
 
-def as_dataframe(rows: list[dict]) -> pd.DataFrame:
+def dict_as_dataframe(rows: list[dict]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
@@ -42,27 +23,103 @@ def metric_value(data: dict, key: str, default="0"):
     return value
 
 
+def coerce_numeric(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+    df = df.copy()
+    for column in columns:
+        if column in df.columns:
+            df[column] = pd.to_numeric(df[column], errors="coerce")
+    return df
+
+
+def build_total_origin_facility_usage() -> pd.DataFrame:
+    df = dict_as_dataframe(queries.get_top_origin_facilities(limit=1000))
+    if df.empty:
+        return df
+    return df.rename(columns={"call_count": "total_call_count"})
+
+
+def build_total_destination_facility_usage() -> pd.DataFrame:
+    df = dict_as_dataframe(queries.get_top_destination_facilities(limit=1000))
+    if df.empty:
+        return df
+    return df.rename(columns={"call_count": "total_call_count"})
+
+
+def build_combined_origin_usage() -> pd.DataFrame:
+    total_df = build_total_origin_facility_usage()
+    success_df = dict_as_dataframe(queries.get_successful_origin_facility_usage())
+
+    if success_df.empty and total_df.empty:
+        return pd.DataFrame()
+
+    if success_df.empty:
+        merged = total_df.copy()
+        merged["successful_call_count"] = 0
+    elif total_df.empty:
+        merged = success_df.copy()
+        merged["total_call_count"] = merged["successful_call_count"]
+    else:
+        merged = total_df.merge(success_df, on="origin", how="outer")
+
+    merged["total_call_count"] = pd.to_numeric(merged["total_call_count"], errors="coerce").fillna(0)
+    merged["successful_call_count"] = pd.to_numeric(
+        merged["successful_call_count"], errors="coerce"
+    ).fillna(0)
+
+    merged = merged.sort_values(
+        by=["total_call_count", "successful_call_count", "origin"],
+        ascending=[False, False, True],
+    )
+
+    return merged
+
+
+def build_combined_destination_usage() -> pd.DataFrame:
+    total_df = build_total_destination_facility_usage()
+    success_df = dict_as_dataframe(queries.get_successful_destination_facility_usage())
+
+    if success_df.empty and total_df.empty:
+        return pd.DataFrame()
+
+    if success_df.empty:
+        merged = total_df.copy()
+        merged["successful_call_count"] = 0
+    elif total_df.empty:
+        merged = success_df.copy()
+        merged["total_call_count"] = merged["successful_call_count"]
+    else:
+        merged = total_df.merge(success_df, on="destination", how="outer")
+
+    merged["total_call_count"] = pd.to_numeric(merged["total_call_count"], errors="coerce").fillna(0)
+    merged["successful_call_count"] = pd.to_numeric(
+        merged["successful_call_count"], errors="coerce"
+    ).fillna(0)
+
+    merged = merged.sort_values(
+        by=["total_call_count", "successful_call_count", "destination"],
+        ascending=[False, False, True],
+    )
+
+    return merged
+
+
 # Load all dashboard data
-core = get_core_funnel_metrics()
-negotiation = get_negotiation_metrics()
-negative_sentiment = get_negative_sentiment_rate()
-qa = get_qa_metrics()
-operational = get_operational_metrics()
+core = queries.get_core_funnel_metrics()
+negotiation = queries.get_negotiation_metrics()
+operational = queries.get_operational_metrics()
 
-sentiment_distribution_df = as_dataframe(get_sentiment_distribution())
-negative_sentiment_by_outcome_df = as_dataframe(get_negative_sentiment_by_outcome())
+sentiment_distribution_df = dict_as_dataframe(queries.get_sentiment_distribution())
+negative_sentiment_by_outcome_df = dict_as_dataframe(queries.get_negative_sentiment_by_outcome())
 
-successful_origin_df = as_dataframe(get_successful_origin_facility_usage())
-successful_destination_df = as_dataframe(get_successful_destination_facility_usage())
-origin_by_hour_df = as_dataframe(get_origin_facility_usage_by_hour())
-destination_by_hour_df = as_dataframe(get_destination_facility_usage_by_hour())
-top_origins_df = as_dataframe(get_top_origin_facilities())
-top_destinations_df = as_dataframe(get_top_destination_facilities())
-facility_transfer_df = as_dataframe(get_facility_transfer_rate())
+combined_origin_usage_df = build_combined_origin_usage()
+combined_destination_usage_df = build_combined_destination_usage()
+origin_by_hour_df = dict_as_dataframe(queries.get_origin_facility_usage_by_hour())
+destination_by_hour_df = dict_as_dataframe(queries.get_destination_facility_usage_by_hour())
+facility_transfer_df = dict_as_dataframe(queries.get_facility_transfer_rate())
 
-duration_by_outcome_df = as_dataframe(get_average_call_duration_by_outcome())
-calls_by_hour_df = as_dataframe(get_calls_by_hour())
-recent_calls_df = as_dataframe(get_recent_calls())
+duration_by_outcome_df = dict_as_dataframe(queries.get_average_call_duration_by_outcome())
+calls_by_hour_df = dict_as_dataframe(queries.get_calls_by_hour())
+recent_calls_df = dict_as_dataframe(queries.get_recent_calls())
 
 
 # Section 1: Core funnel metrics
@@ -94,16 +151,12 @@ col4.metric("Average Negotiation Turns", metric_value(negotiation, "average_nego
 # Section 3: Sentiment and QA
 st.header("Sentiment and QA")
 
-col1, col2, col3 = st.columns(3)
-col1.metric("Negative Sentiment Rate", f"{metric_value(negative_sentiment, 'negative_sentiment_rate', 0)}%")
-col2.metric("Missing Transcript Rate", f"{metric_value(qa, 'missing_transcript_rate', 0)}%")
-col3.metric("Missing Key Fields Rate", f"{metric_value(qa, 'missing_key_fields_rate', 0)}%")
-
 left, right = st.columns(2)
 
 with left:
     st.subheader("Sentiment Distribution")
     if not sentiment_distribution_df.empty:
+        sentiment_distribution_df = coerce_numeric(sentiment_distribution_df, ["count", "percentage"])
         chart_df = sentiment_distribution_df.set_index("sentiment")[["count"]]
         st.bar_chart(chart_df)
         st.dataframe(sentiment_distribution_df, use_container_width=True)
@@ -113,6 +166,10 @@ with left:
 with right:
     st.subheader("Negative Sentiment by Outcome")
     if not negative_sentiment_by_outcome_df.empty:
+        negative_sentiment_by_outcome_df = coerce_numeric(
+            negative_sentiment_by_outcome_df,
+            ["negative_count", "total_count", "negative_rate"],
+        )
         chart_df = negative_sentiment_by_outcome_df.set_index("final_outcome")[["negative_rate"]]
         st.bar_chart(chart_df)
         st.dataframe(negative_sentiment_by_outcome_df, use_container_width=True)
@@ -126,45 +183,31 @@ st.header("Freight Facility Usage")
 left, right = st.columns(2)
 
 with left:
-    st.subheader("Successful Origin Facility Usage")
-    if not successful_origin_df.empty:
-        chart_df = successful_origin_df.set_index("origin")[["successful_call_count"]]
+    st.subheader("Origin Facility Usage: Total vs Successful")
+    if not combined_origin_usage_df.empty:
+        chart_df = combined_origin_usage_df.set_index("origin")[
+            ["total_call_count", "successful_call_count"]
+        ]
         st.bar_chart(chart_df)
-        st.dataframe(successful_origin_df, use_container_width=True)
     else:
-        st.info("No successful origin facility data available.")
+        st.info("No origin facility usage data available.")
 
 with right:
-    st.subheader("Successful Destination Facility Usage")
-    if not successful_destination_df.empty:
-        chart_df = successful_destination_df.set_index("destination")[["successful_call_count"]]
+    st.subheader("Destination Facility Usage: Total vs Successful")
+    if not combined_destination_usage_df.empty:
+        chart_df = combined_destination_usage_df.set_index("destination")[
+            ["total_call_count", "successful_call_count"]
+        ]
         st.bar_chart(chart_df)
-        st.dataframe(successful_destination_df, use_container_width=True)
     else:
-        st.info("No successful destination facility data available.")
-
-left, right = st.columns(2)
-
-with left:
-    st.subheader("Top Origin Facilities")
-    if not top_origins_df.empty:
-        chart_df = top_origins_df.set_index("origin")[["call_count"]]
-        st.bar_chart(chart_df)
-        st.dataframe(top_origins_df, use_container_width=True)
-    else:
-        st.info("No top origin facility data available.")
-
-with right:
-    st.subheader("Top Destination Facilities")
-    if not top_destinations_df.empty:
-        chart_df = top_destinations_df.set_index("destination")[["call_count"]]
-        st.bar_chart(chart_df)
-        st.dataframe(top_destinations_df, use_container_width=True)
-    else:
-        st.info("No top destination facility data available.")
+        st.info("No destination facility usage data available.")
 
 st.subheader("Facility Transfer Rate")
 if not facility_transfer_df.empty:
+    facility_transfer_df = coerce_numeric(
+        facility_transfer_df,
+        ["total_matched_calls", "transferred_calls", "transfer_rate"],
+    )
     st.dataframe(facility_transfer_df, use_container_width=True)
 else:
     st.info("No facility transfer rate data available.")
@@ -174,6 +217,7 @@ left, right = st.columns(2)
 with left:
     st.subheader("Origin Facility Usage by Hour")
     if not origin_by_hour_df.empty:
+        origin_by_hour_df = coerce_numeric(origin_by_hour_df, ["hour_of_day", "call_count"])
         st.dataframe(origin_by_hour_df, use_container_width=True)
     else:
         st.info("No origin facility usage-by-hour data available.")
@@ -181,6 +225,7 @@ with left:
 with right:
     st.subheader("Destination Facility Usage by Hour")
     if not destination_by_hour_df.empty:
+        destination_by_hour_df = coerce_numeric(destination_by_hour_df, ["hour_of_day", "call_count"])
         st.dataframe(destination_by_hour_df, use_container_width=True)
     else:
         st.info("No destination facility usage-by-hour data available.")
@@ -198,6 +243,7 @@ col1.metric(
 with col2:
     st.subheader("Calls by Hour")
     if not calls_by_hour_df.empty:
+        calls_by_hour_df = coerce_numeric(calls_by_hour_df, ["hour_of_day", "call_count"])
         chart_df = calls_by_hour_df.set_index("hour_of_day")[["call_count"]]
         st.bar_chart(chart_df)
     else:
@@ -205,6 +251,7 @@ with col2:
 
 st.subheader("Average Call Duration by Outcome")
 if not duration_by_outcome_df.empty:
+    duration_by_outcome_df = coerce_numeric(duration_by_outcome_df, ["average_call_duration_seconds"])
     chart_df = duration_by_outcome_df.set_index("final_outcome")[["average_call_duration_seconds"]]
     st.bar_chart(chart_df)
     st.dataframe(duration_by_outcome_df, use_container_width=True)
