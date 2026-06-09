@@ -1,7 +1,12 @@
+import altair as alt
 import pandas as pd
 import streamlit as st
 
 import dashboard.queries as queries
+
+
+TEAL = "#2A9D8F"
+NAVY = "#16324F"
 
 
 st.set_page_config(
@@ -16,253 +21,290 @@ def dict_as_dataframe(rows: list[dict]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def metric_value(data: dict, key: str, default="0"):
-    value = data.get(key)
+def titleize(value):
     if value is None:
-        return default
+        return "Unknown"
+    if isinstance(value, str):
+        value = value.replace("_", " ").strip()
+        return value.title() if value else "Unknown"
     return value
 
 
-def coerce_numeric(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+def prettify_columns(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    for column in columns:
-        if column in df.columns:
-            df[column] = pd.to_numeric(df[column], errors="coerce")
+    df.columns = [col.replace("_", " ").strip().title() for col in df.columns]
     return df
 
 
-def build_total_origin_facility_usage() -> pd.DataFrame:
-    df = dict_as_dataframe(queries.get_top_origin_facilities(limit=1000))
-    if df.empty:
-        return df
-    return df.rename(columns={"call_count": "total_call_count"})
+def prepare_dataframe(rows, numeric_columns=None, text_columns=None) -> pd.DataFrame:
+    df = dict_as_dataframe(rows)
+
+    if numeric_columns:
+        for col in numeric_columns:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    if text_columns:
+        for col in text_columns:
+            if col in df.columns:
+                df[col] = df[col].map(titleize)
+
+    return df
 
 
-def build_total_destination_facility_usage() -> pd.DataFrame:
-    df = dict_as_dataframe(queries.get_top_destination_facilities(limit=1000))
-    if df.empty:
-        return df
-    return df.rename(columns={"call_count": "total_call_count"})
+def format_percent(value) -> str:
+    return f"{value:.2f}%"
 
 
-def build_combined_origin_usage() -> pd.DataFrame:
-    total_df = build_total_origin_facility_usage()
-    success_df = dict_as_dataframe(queries.get_successful_origin_facility_usage())
+def format_number(value) -> str:
+    return f"{value:,.2f}"
 
-    if success_df.empty and total_df.empty:
-        return pd.DataFrame()
 
-    if success_df.empty:
-        merged = total_df.copy()
-        merged["successful_call_count"] = 0
-    elif total_df.empty:
-        merged = success_df.copy()
-        merged["total_call_count"] = merged["successful_call_count"]
-    else:
-        merged = total_df.merge(success_df, on="origin", how="outer")
+def format_currency(value) -> str:
+    return f"${value:,.2f}"
 
-    merged["total_call_count"] = pd.to_numeric(merged["total_call_count"], errors="coerce").fillna(0)
+
+def format_integer(value) -> str:
+    return f"{int(value):,}"
+
+
+def bar_chart(df: pd.DataFrame, x: str, y: str, color: str = TEAL, sort=None, height: int = 320):
+    chart = (
+        alt.Chart(df)
+        .mark_bar(color=color, cornerRadiusTopLeft=4, cornerRadiusTopRight=4)
+        .encode(
+            x=alt.X(x, sort=sort, title=None),
+            y=alt.Y(y, title=None),
+            tooltip=list(df.columns),
+        )
+        .properties(height=height)
+    )
+    st.altair_chart(chart, use_container_width=True)
+
+
+def grouped_bar_chart(df: pd.DataFrame, x: str, y: str, group: str, height: int = 360):
+    chart = (
+        alt.Chart(df)
+        .mark_bar(cornerRadiusTopLeft=4, cornerRadiusTopRight=4)
+        .encode(
+            x=alt.X(x, title=None),
+            xOffset=alt.XOffset(group),
+            y=alt.Y(y, title=None),
+            color=alt.Color(
+                group,
+                scale=alt.Scale(
+                    domain=["Total Calls", "Successful Calls"],
+                    range=[NAVY, TEAL],
+                ),
+                title=None,
+            ),
+            tooltip=list(df.columns),
+        )
+        .properties(height=height)
+    )
+    st.altair_chart(chart, use_container_width=True)
+
+
+def heatmap(df: pd.DataFrame, x: str, y: str, color: str, height: int = 320):
+    chart = (
+        alt.Chart(df)
+        .mark_rect()
+        .encode(
+            x=alt.X(x, title=None),
+            y=alt.Y(y, title=None),
+            color=alt.Color(color, scale=alt.Scale(scheme="teals"), title="Call Count"),
+            tooltip=list(df.columns),
+        )
+        .properties(height=height)
+    )
+    st.altair_chart(chart, use_container_width=True)
+
+
+def combined_usage(total_rows, success_rows, key_column: str) -> pd.DataFrame:
+    total_df = prepare_dataframe(total_rows, numeric_columns=["call_count"])
+    success_df = prepare_dataframe(success_rows, numeric_columns=["successful_call_count"])
+
+    merged = total_df.merge(success_df, on=key_column, how="outer")
+    merged[key_column] = merged[key_column].map(titleize)
+    merged["call_count"] = pd.to_numeric(merged["call_count"], errors="coerce").fillna(0)
     merged["successful_call_count"] = pd.to_numeric(
         merged["successful_call_count"], errors="coerce"
     ).fillna(0)
 
-    merged = merged.sort_values(
-        by=["total_call_count", "successful_call_count", "origin"],
-        ascending=[False, False, True],
+    merged = merged.melt(
+        id_vars=[key_column],
+        value_vars=["call_count", "successful_call_count"],
+        var_name="series",
+        value_name="count",
     )
 
-    return merged
-
-
-def build_combined_destination_usage() -> pd.DataFrame:
-    total_df = build_total_destination_facility_usage()
-    success_df = dict_as_dataframe(queries.get_successful_destination_facility_usage())
-
-    if success_df.empty and total_df.empty:
-        return pd.DataFrame()
-
-    if success_df.empty:
-        merged = total_df.copy()
-        merged["successful_call_count"] = 0
-    elif total_df.empty:
-        merged = success_df.copy()
-        merged["total_call_count"] = merged["successful_call_count"]
-    else:
-        merged = total_df.merge(success_df, on="destination", how="outer")
-
-    merged["total_call_count"] = pd.to_numeric(merged["total_call_count"], errors="coerce").fillna(0)
-    merged["successful_call_count"] = pd.to_numeric(
-        merged["successful_call_count"], errors="coerce"
-    ).fillna(0)
-
-    merged = merged.sort_values(
-        by=["total_call_count", "successful_call_count", "destination"],
-        ascending=[False, False, True],
+    merged["series"] = merged["series"].replace(
+        {
+            "call_count": "Total Calls",
+            "successful_call_count": "Successful Calls",
+        }
     )
+    return merged.sort_values(by=[key_column, "series"])
 
-    return merged
+
+def calls_by_hour_dataframe(rows) -> pd.DataFrame:
+    df = prepare_dataframe(rows, numeric_columns=["hour_of_day", "call_count"])
+    all_hours = pd.DataFrame({"hour_of_day": list(range(24))})
+    df = all_hours.merge(df, on="hour_of_day", how="left")
+    df["call_count"] = df["call_count"].fillna(0)
+    return df
 
 
-# Load all dashboard data
 core = queries.get_core_funnel_metrics()
 negotiation = queries.get_negotiation_metrics()
 operational = queries.get_operational_metrics()
 
-sentiment_distribution_df = dict_as_dataframe(queries.get_sentiment_distribution())
-negative_sentiment_by_outcome_df = dict_as_dataframe(queries.get_negative_sentiment_by_outcome())
+sentiment_distribution_df = prepare_dataframe(
+    queries.get_sentiment_distribution(),
+    numeric_columns=["count", "percentage"],
+    text_columns=["sentiment"],
+)
 
-combined_origin_usage_df = build_combined_origin_usage()
-combined_destination_usage_df = build_combined_destination_usage()
-origin_by_hour_df = dict_as_dataframe(queries.get_origin_facility_usage_by_hour())
-destination_by_hour_df = dict_as_dataframe(queries.get_destination_facility_usage_by_hour())
-facility_transfer_df = dict_as_dataframe(queries.get_facility_transfer_rate())
+negative_sentiment_by_outcome_df = prepare_dataframe(
+    queries.get_negative_sentiment_by_outcome(),
+    numeric_columns=["negative_count", "total_count", "negative_rate"],
+    text_columns=["final_outcome"],
+)
 
-duration_by_outcome_df = dict_as_dataframe(queries.get_average_call_duration_by_outcome())
-calls_by_hour_df = dict_as_dataframe(queries.get_calls_by_hour())
-recent_calls_df = dict_as_dataframe(queries.get_recent_calls())
+origin_usage_df = combined_usage(
+    queries.get_top_origin_facilities(limit=1000),
+    queries.get_successful_origin_facility_usage(),
+    key_column="origin",
+)
+
+destination_usage_df = combined_usage(
+    queries.get_top_destination_facilities(limit=1000),
+    queries.get_successful_destination_facility_usage(),
+    key_column="destination",
+)
+
+facility_transfer_df = prepare_dataframe(
+    queries.get_facility_transfer_rate(),
+    numeric_columns=["total_matched_calls", "transferred_calls", "transfer_rate"],
+    text_columns=["origin", "destination"],
+)
+
+origin_by_hour_df = prepare_dataframe(
+    queries.get_origin_facility_usage_by_hour(),
+    numeric_columns=["hour_of_day", "call_count"],
+    text_columns=["origin"],
+)
+
+destination_by_hour_df = prepare_dataframe(
+    queries.get_destination_facility_usage_by_hour(),
+    numeric_columns=["hour_of_day", "call_count"],
+    text_columns=["destination"],
+)
+
+calls_by_hour_df = calls_by_hour_dataframe(queries.get_calls_by_hour())
+
+duration_by_outcome_df = prepare_dataframe(
+    queries.get_average_call_duration_by_outcome(),
+    numeric_columns=["average_call_duration_seconds"],
+    text_columns=["final_outcome"],
+)
+
+recent_calls_df = prepare_dataframe(
+    queries.get_recent_calls(),
+    numeric_columns=["agreed_rate", "negotiation_turns"],
+    text_columns=["final_outcome", "sentiment"],
+)
 
 
-# Section 1: Core funnel metrics
 st.header("Core Funnel Metrics")
+c1, c2, c3, c4 = st.columns(4)
+c1.metric("Total Saved Calls", format_integer(core["total_saved_calls"]))
+c2.metric("Authorized Carrier Rate", format_percent(core["authorized_carrier_rate"]))
+c3.metric("Load Match Rate", format_percent(core["load_match_rate"]))
+c4.metric("Transfer Rate", format_percent(core["transfer_rate"]))
 
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Total Saved Calls", metric_value(core, "total_saved_calls", 0))
-col2.metric("Authorized Carrier Rate", f"{metric_value(core, 'authorized_carrier_rate', 0)}%")
-col3.metric("Load Match Rate", f"{metric_value(core, 'load_match_rate', 0)}%")
-col4.metric("Transfer Rate", f"{metric_value(core, 'transfer_rate', 0)}%")
-
-col5, col6, col7, col8 = st.columns(4)
-col5.metric("No Match Rate", f"{metric_value(core, 'no_match_rate', 0)}%")
-col6.metric("Not Authorized Rate", f"{metric_value(core, 'not_authorized_rate', 0)}%")
-col7.metric("Caller Not Interested Rate", f"{metric_value(core, 'caller_not_interested_rate', 0)}%")
-col8.metric("Incomplete Call Rate", f"{metric_value(core, 'incomplete_call_rate', 0)}%")
+c5, c6, c7, c8 = st.columns(4)
+c5.metric("No Match Rate", format_percent(core["no_match_rate"]))
+c6.metric("Not Authorized Rate", format_percent(core["not_authorized_rate"]))
+c7.metric("Caller Not Interested Rate", format_percent(core["caller_not_interested_rate"]))
+c8.metric("Incomplete Call Rate", format_percent(core["incomplete_call_rate"]))
 
 
-# Section 2: Negotiation metrics
 st.header("Negotiation Metrics")
+c1, c2, c3, c4 = st.columns(4)
+c1.metric("Negotiation Success Rate", format_percent(negotiation["negotiation_success_rate"]))
+c2.metric("Negotiation Failed Rate", format_percent(negotiation["negotiation_failed_rate"]))
+c3.metric("Average Agreed Rate", format_currency(negotiation["average_agreed_rate"]))
+c4.metric("Average Negotiation Turns", format_number(negotiation["average_negotiation_turns"]))
 
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Negotiation Success Rate", f"{metric_value(negotiation, 'negotiation_success_rate', 0)}%")
-col2.metric("Negotiation Failed Rate", f"{metric_value(negotiation, 'negotiation_failed_rate', 0)}%")
-col3.metric("Average Agreed Rate", metric_value(negotiation, "average_agreed_rate", 0))
-col4.metric("Average Negotiation Turns", metric_value(negotiation, "average_negotiation_turns", 0))
 
-
-# Section 3: Sentiment and QA
-st.header("Sentiment and QA")
-
+st.header("Sentiment")
 left, right = st.columns(2)
 
 with left:
     st.subheader("Sentiment Distribution")
-    if not sentiment_distribution_df.empty:
-        sentiment_distribution_df = coerce_numeric(sentiment_distribution_df, ["count", "percentage"])
-        chart_df = sentiment_distribution_df.set_index("sentiment")[["count"]]
-        st.bar_chart(chart_df)
-        st.dataframe(sentiment_distribution_df, use_container_width=True)
-    else:
-        st.info("No sentiment data available.")
+    bar_chart(sentiment_distribution_df, x="sentiment:N", y="count:Q")
 
 with right:
-    st.subheader("Negative Sentiment by Outcome")
-    if not negative_sentiment_by_outcome_df.empty:
-        negative_sentiment_by_outcome_df = coerce_numeric(
-            negative_sentiment_by_outcome_df,
-            ["negative_count", "total_count", "negative_rate"],
-        )
-        chart_df = negative_sentiment_by_outcome_df.set_index("final_outcome")[["negative_rate"]]
-        st.bar_chart(chart_df)
-        st.dataframe(negative_sentiment_by_outcome_df, use_container_width=True)
-    else:
-        st.info("No negative sentiment by outcome data available.")
+    st.subheader("Negative Sentiment By Outcome")
+    bar_chart(
+        negative_sentiment_by_outcome_df,
+        x="final_outcome:N",
+        y="negative_rate:Q",
+    )
 
 
-# Section 4: Freight facility usage
 st.header("Freight Facility Usage")
-
 left, right = st.columns(2)
 
 with left:
-    st.subheader("Origin Facility Usage: Total vs Successful")
-    if not combined_origin_usage_df.empty:
-        chart_df = combined_origin_usage_df.set_index("origin")[
-            ["total_call_count", "successful_call_count"]
-        ]
-        st.bar_chart(chart_df)
-    else:
-        st.info("No origin facility usage data available.")
+    st.subheader("Origin Facility Usage")
+    grouped_bar_chart(origin_usage_df, x="origin:N", y="count:Q", group="series:N")
 
 with right:
-    st.subheader("Destination Facility Usage: Total vs Successful")
-    if not combined_destination_usage_df.empty:
-        chart_df = combined_destination_usage_df.set_index("destination")[
-            ["total_call_count", "successful_call_count"]
-        ]
-        st.bar_chart(chart_df)
-    else:
-        st.info("No destination facility usage data available.")
+    st.subheader("Destination Facility Usage")
+    grouped_bar_chart(destination_usage_df, x="destination:N", y="count:Q", group="series:N")
 
 st.subheader("Facility Transfer Rate")
-if not facility_transfer_df.empty:
-    facility_transfer_df = coerce_numeric(
-        facility_transfer_df,
-        ["total_matched_calls", "transferred_calls", "transfer_rate"],
-    )
-    st.dataframe(facility_transfer_df, use_container_width=True)
-else:
-    st.info("No facility transfer rate data available.")
+st.dataframe(prettify_columns(facility_transfer_df), use_container_width=True)
 
 left, right = st.columns(2)
 
 with left:
-    st.subheader("Origin Facility Usage by Hour")
-    if not origin_by_hour_df.empty:
-        origin_by_hour_df = coerce_numeric(origin_by_hour_df, ["hour_of_day", "call_count"])
-        st.dataframe(origin_by_hour_df, use_container_width=True)
-    else:
-        st.info("No origin facility usage-by-hour data available.")
+    st.subheader("Origin Facility Usage By Hour")
+    heatmap(origin_by_hour_df, x="hour_of_day:O", y="origin:N", color="call_count:Q")
 
 with right:
-    st.subheader("Destination Facility Usage by Hour")
-    if not destination_by_hour_df.empty:
-        destination_by_hour_df = coerce_numeric(destination_by_hour_df, ["hour_of_day", "call_count"])
-        st.dataframe(destination_by_hour_df, use_container_width=True)
-    else:
-        st.info("No destination facility usage-by-hour data available.")
+    st.subheader("Destination Facility Usage By Hour")
+    heatmap(destination_by_hour_df, x="hour_of_day:O", y="destination:N", color="call_count:Q")
 
 
-# Section 5: Operational call metrics
 st.header("Operational Call Metrics")
+left, right = st.columns(2)
 
-col1, col2 = st.columns(2)
-col1.metric(
-    "Average Call Duration (Seconds)",
-    metric_value(operational, "average_call_duration_seconds", 0),
+with left:
+    st.metric(
+        "Average Call Duration (Seconds)",
+        format_number(operational["average_call_duration_seconds"]),
+    )
+
+with right:
+    st.subheader("Calls Per Hour")
+    bar_chart(
+        calls_by_hour_df,
+        x="hour_of_day:O",
+        y="call_count:Q",
+        color=NAVY,
+        sort=list(range(24)),
+    )
+
+st.subheader("Average Call Duration By Outcome")
+bar_chart(
+    duration_by_outcome_df,
+    x="final_outcome:N",
+    y="average_call_duration_seconds:Q",
 )
 
-with col2:
-    st.subheader("Calls by Hour")
-    if not calls_by_hour_df.empty:
-        calls_by_hour_df = coerce_numeric(calls_by_hour_df, ["hour_of_day", "call_count"])
-        chart_df = calls_by_hour_df.set_index("hour_of_day")[["call_count"]]
-        st.bar_chart(chart_df)
-    else:
-        st.info("No calls-by-hour data available.")
 
-st.subheader("Average Call Duration by Outcome")
-if not duration_by_outcome_df.empty:
-    duration_by_outcome_df = coerce_numeric(duration_by_outcome_df, ["average_call_duration_seconds"])
-    chart_df = duration_by_outcome_df.set_index("final_outcome")[["average_call_duration_seconds"]]
-    st.bar_chart(chart_df)
-    st.dataframe(duration_by_outcome_df, use_container_width=True)
-else:
-    st.info("No call duration by outcome data available.")
-
-
-# Section 6: Drill-down table
 st.header("Recent Calls")
-
-if not recent_calls_df.empty:
-    st.dataframe(recent_calls_df, use_container_width=True)
-else:
-    st.info("No recent call data available.")
+st.dataframe(prettify_columns(recent_calls_df), use_container_width=True)
