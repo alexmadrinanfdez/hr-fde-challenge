@@ -15,8 +15,6 @@ def fetch_all(query: str, params: dict | None = None) -> list[dict]:
             rows = cur.fetchall()
     return rows
 
-
-# 9.1 Core funnel metrics
 def get_core_funnel_metrics() -> dict:
     query = """
     SELECT
@@ -63,7 +61,6 @@ def get_core_funnel_metrics() -> dict:
     """
     return fetch_one(query)
 
-# 9.2 Negotiation metrics
 def get_negotiation_metrics() -> dict:
     query = """
     SELECT
@@ -101,7 +98,6 @@ def get_negotiation_metrics() -> dict:
     """
     return fetch_one(query)
 
-# 9.3 Sentiment and QA
 def get_sentiment_distribution() -> list[dict]:
     query = """
     SELECT
@@ -113,17 +109,6 @@ def get_sentiment_distribution() -> list[dict]:
     ORDER BY sentiment
     """
     return fetch_all(query)
-
-def get_negative_sentiment_rate() -> dict:
-    query = """
-    SELECT
-        ROUND(
-            100.0 * COUNT(*) FILTER (WHERE sentiment = 'negative') / NULLIF(COUNT(*), 0),
-            2
-        ) AS negative_sentiment_rate
-    FROM calls
-    """
-    return fetch_one(query)
 
 def get_negative_sentiment_by_outcome() -> list[dict]:
     query = """
@@ -141,28 +126,6 @@ def get_negative_sentiment_by_outcome() -> list[dict]:
     """
     return fetch_all(query)
 
-def get_qa_metrics() -> dict:
-    query = """
-    SELECT
-        ROUND(
-            100.0 * COUNT(*) FILTER (
-                WHERE transcript_url IS NULL OR BTRIM(transcript_url) = ''
-            ) / NULLIF(COUNT(*), 0),
-            2
-        ) AS missing_transcript_rate,
-        ROUND(
-            100.0 * COUNT(*) FILTER (
-                WHERE requested_origin IS NULL OR BTRIM(requested_origin) = ''
-                   OR requested_destination IS NULL OR BTRIM(requested_destination) = ''
-                   OR requested_pickup_window IS NULL OR BTRIM(requested_pickup_window) = ''
-            ) / NULLIF(COUNT(*), 0),
-            2
-        ) AS missing_key_fields_rate
-    FROM calls
-    """
-    return fetch_one(query)
-
-# 9.4 Freight facility usage
 def get_successful_origin_facility_usage() -> list[dict]:
     query = """
     SELECT
@@ -265,7 +228,6 @@ def get_facility_transfer_rate() -> list[dict]:
     """
     return fetch_all(query)
 
-# 9.5 Operational call metrics
 def get_operational_metrics() -> dict:
     query = """
     SELECT
@@ -302,7 +264,6 @@ def get_calls_by_hour() -> list[dict]:
     """
     return fetch_all(query)
 
-# Drill-down / raw data
 def get_recent_calls(limit: int = 100) -> list[dict]:
     query = """
     SELECT
