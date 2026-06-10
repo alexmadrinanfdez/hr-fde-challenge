@@ -5,9 +5,9 @@ from typing import Optional
 from fastapi import Depends, FastAPI, HTTPException, Query
 from psycopg.errors import CheckViolation, ForeignKeyViolation, UniqueViolation
 
-from app.auth import verify_api_key
+from api.auth import verify_api_key
 from common.db import get_connection
-from app.schemas import CallCreate, CallCreateResponse, LoadOut
+from api.schemas import CallCreate, CallCreateResponse, LoadOut
 
 
 app = FastAPI(title="Inbound Carrier Sales API")

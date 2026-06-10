@@ -29,7 +29,7 @@ Loads must be imported before calls (to satisfy foreign key checks).
 ### API
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn api.main:app --reload
 ```
 #### API Endpoints
 
@@ -52,7 +52,7 @@ Opens at `http://localhost:8501`.
 ## Project Structure
 
 ```text
-app/           API (FastAPI)
+api/           API (FastAPI)
 common/        Shared database connection
 dashboard/     Reporting dashboard (Streamlit)
 scripts/       CSV import scripts
