@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: inbound_carrier_sales
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/inbound_carrier_sales
+      API_KEY: ${API_KEY:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/inbound_carrier_sales
+    ports:
+      - "8501:8501"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  seed:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/inbound_carrier_sales
+      LOADS_CSV_PATH: /data/loads.csv
+      CALLS_CSV_PATH: /data/calls.csv
+    volumes:
+      - ./data:/data
+      - ./scripts:/scripts
+    command: sh -c "python /scripts/import_loads.py && python /scripts/import_calls.py"
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - seed
+
+volumes:
+  pgdata:
