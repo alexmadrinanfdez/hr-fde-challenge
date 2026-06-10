@@ -2,9 +2,10 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query
 from psycopg.errors import CheckViolation, ForeignKeyViolation, UniqueViolation
 
+from app.auth import verify_api_key
 from common.db import get_connection
 from app.schemas import CallCreate, CallCreateResponse, LoadOut
 
@@ -22,11 +23,13 @@ def startup_check():
     except Exception as e:
         raise RuntimeError(f"Database connection failed during startup: {e}") from e
 
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
 
-@app.get("/loads", response_model=list[LoadOut])
+
+@app.get("/loads", response_model=list[LoadOut], dependencies=[Depends(verify_api_key)])
 def get_loads(
     origin: Optional[str] = Query(default=None),
     destination: Optional[str] = Query(default=None),
@@ -115,7 +118,8 @@ def get_loads(
 
     return [LoadOut(**row) for row in rows]
 
-@app.post("/calls", response_model=CallCreateResponse, status_code=201)
+
+@app.post("/calls", response_model=CallCreateResponse, status_code=201, dependencies=[Depends(verify_api_key)])
 def create_call(payload: CallCreate):
     call_id = payload.call_id or str(uuid.uuid4())
 
