@@ -4,7 +4,7 @@ import pandas as pd
 def _rate(numerator: int, denominator: int) -> float:
     if denominator == 0:
         return 0.0
-    return round(100.0 * numerator / denominator, 2)
+    return round(numerator / denominator, 4)
 
 
 def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
@@ -22,42 +22,68 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
 
     core = {
         "total_saved_calls": total,
-        "authorized_carrier_rate": _rate(calls["carrier_authorized"].sum(), total),
-        "load_match_rate": _rate(calls["matched_load_id"].notna().sum(), total),
+        "authorized_carrier_rate": _rate(int(calls["carrier_authorized"].sum()), total),
+        "load_match_rate": _rate(int(calls["matched_load_id"].notna().sum()), total),
         "transfer_rate": _rate(
-            (calls["final_outcome"] == "transferred_after_agreement").sum(), total
+            int((calls["final_outcome"] == "transferred_after_agreement").sum()), total
         ),
         "no_match_rate": _rate(
-            (calls["final_outcome"] == "no_matching_load").sum(), total
+            int((calls["final_outcome"] == "no_matching_load").sum()), total
         ),
         "not_authorized_rate": _rate(
-            (calls["final_outcome"] == "carrier_not_verified").sum(), total
+            int((calls["final_outcome"] == "carrier_not_verified").sum()), total
         ),
         "caller_not_interested_rate": _rate(
-            (calls["final_outcome"] == "caller_not_interested").sum(), total
+            int((calls["final_outcome"] == "caller_not_interested").sum()), total
         ),
         "incomplete_call_rate": _rate(
-            (calls["final_outcome"] == "incomplete_call").sum(), total
+            int((calls["final_outcome"] == "incomplete_call").sum()), total
         ),
     }
+
+    stages = ["Total Calls", "Authorized", "Load Matched", "Transferred"]
+    funnel = pd.DataFrame(
+        {
+            "count": [
+                total,
+                int(calls["carrier_authorized"].sum()),
+                int(calls["matched_load_id"].notna().sum()),
+                int((calls["final_outcome"] == "transferred_after_agreement").sum()),
+            ],
+        },
+        index=pd.CategoricalIndex(stages, categories=stages, ordered=True),
+    )
 
     negotiation_outcomes = calls[
         calls["final_outcome"].isin(["transferred_after_agreement", "negotiation_failed"])
     ]
     negotiation_total = len(negotiation_outcomes)
 
+    average_agreed_rate = (
+        round(calls["agreed_rate"].dropna().mean(), 2)
+        if calls["agreed_rate"].notna().any()
+        else 0.0
+    )
+
+    average_loadboard_rate = (
+        matched["loadboard_rate"].dropna().mean()
+        if "loadboard_rate" in matched.columns and matched["loadboard_rate"].notna().any()
+        else 0.0
+    )
+
+    agreed_delta_pct = 100 * _rate(average_agreed_rate - average_loadboard_rate, average_loadboard_rate)
+
     negotiation = {
         "negotiation_success_rate": _rate(
-            (negotiation_outcomes["final_outcome"] == "transferred_after_agreement").sum(),
+            int((negotiation_outcomes["final_outcome"] == "transferred_after_agreement").sum()),
             negotiation_total,
         ),
         "negotiation_failed_rate": _rate(
-            (negotiation_outcomes["final_outcome"] == "negotiation_failed").sum(),
+            int((negotiation_outcomes["final_outcome"] == "negotiation_failed").sum()),
             negotiation_total,
         ),
-        "average_agreed_rate": round(calls["agreed_rate"].dropna().mean(), 2)
-        if calls["agreed_rate"].notna().any()
-        else 0.0,
+        "average_agreed_rate": average_agreed_rate,
+        "agreed_delta_pct": agreed_delta_pct,
         "average_negotiation_turns": round(calls["negotiation_turns"].dropna().mean(), 2)
         if calls["negotiation_turns"].notna().any()
         else 0.0,
@@ -67,7 +93,6 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
         calls.groupby("sentiment").size().reset_index(name="count")
     )
 
-    # Stacked: positive + neutral + negative, with zero-fill
     sentiment_by_outcome = (
         calls[calls["sentiment"].isin(["positive", "neutral", "negative"])]
         .groupby(["final_outcome", "sentiment"])
@@ -103,7 +128,7 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
         .reset_index()
     )
     facility_transfer["transfer_rate"] = facility_transfer.apply(
-        lambda row: _rate(row["transferred_calls"], row["total_matched_calls"]), axis=1
+        lambda row: _rate(int(row["transferred_calls"]), int(row["total_matched_calls"])), axis=1
     )
     facility_transfer = facility_transfer.sort_values(
         by=["transfer_rate", "total_matched_calls"],
@@ -116,6 +141,8 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
         pivot = df.pivot_table(
             index=key, columns="hour_of_day", values="call_id", aggfunc="count", fill_value=0
         )
+        pivot = pivot.reindex(columns=range(24), fill_value=0)
+        pivot = pivot.map(lambda v: v > 0)
         return pivot
 
     origin_by_hour = facility_by_hour("origin")
@@ -137,6 +164,7 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
 
     return {
         "core": core,
+        "funnel": funnel,
         "negotiation": negotiation,
         "sentiment_distribution": sentiment_distribution,
         "sentiment_by_outcome": sentiment_by_outcome,

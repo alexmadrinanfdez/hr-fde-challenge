@@ -34,7 +34,8 @@ def get_loads() -> list[dict]:
         load_id,
         origin,
         destination,
-        equipment_type
+        equipment_type,
+        loadboard_rate
     FROM loads
     """
     with get_connection() as conn:

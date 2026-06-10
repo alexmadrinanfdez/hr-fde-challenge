@@ -11,6 +11,7 @@ SLATE = "#8B9DAF"
 
 st.set_page_config(page_title="Inbound Carrier Sales Dashboard", layout="wide")
 st.title("Inbound Carrier Sales Dashboard")
+st.caption("Operational analytics for inbound carrier call performance and freight matching.")
 
 OUTCOME_SHORT = {
     "Transferred After Agreement": "Transferred",
@@ -49,22 +50,6 @@ def shorten_index(df):
     return df
 
 
-def format_percent(v):
-    return f"{v:.2f}%"
-
-
-def format_currency(v):
-    return f"${v:,.2f}"
-
-
-def format_number(v):
-    return f"{v:,.2f}"
-
-
-def format_integer(v):
-    return f"{int(v):,}"
-
-
 @st.cache_data(ttl=60)
 def load_data():
     calls = pd.DataFrame(get_calls())
@@ -77,31 +62,63 @@ def load_data():
     return calls, loads
 
 
-calls, loads = load_data()
+calls_raw, loads = load_data()
+
+# Date range filter
+st.sidebar.header("Filters")
+min_date = calls_raw["call_started_at"].min().date()
+max_date = calls_raw["call_started_at"].max().date()
+
+date_range = st.sidebar.date_input(
+    "Date range",
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date,
+)
+
+if len(date_range) == 2:
+    start, end = date_range
+    calls = calls_raw[
+        (calls_raw["call_started_at"].dt.date >= start)
+        & (calls_raw["call_started_at"].dt.date <= end)
+    ]
+else:
+    calls = calls_raw
+
 m = compute(calls, loads)
 
-# KPI rows
+# Core funnel section
 st.header("Core Funnel Metrics")
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Total Saved Calls", format_integer(m["core"]["total_saved_calls"]))
-c2.metric("Authorized Carrier Rate", format_percent(m["core"]["authorized_carrier_rate"]))
-c3.metric("Load Match Rate", format_percent(m["core"]["load_match_rate"]))
-c4.metric("Transfer Rate", format_percent(m["core"]["transfer_rate"]))
+c1.metric("Total Saved Calls", m["core"]["total_saved_calls"], format="localized")
+c2.metric("Authorized Carrier Rate", m["core"]["authorized_carrier_rate"], format="percent")
+c3.metric("Load Match Rate", m["core"]["load_match_rate"], format="percent")
+c4.metric("Transfer Rate", m["core"]["transfer_rate"], format="percent")
 
 c5, c6, c7, c8 = st.columns(4)
-c5.metric("No Match Rate", format_percent(m["core"]["no_match_rate"]))
-c6.metric("Not Authorized Rate", format_percent(m["core"]["not_authorized_rate"]))
-c7.metric("Caller Not Interested Rate", format_percent(m["core"]["caller_not_interested_rate"]))
-c8.metric("Incomplete Call Rate", format_percent(m["core"]["incomplete_call_rate"]))
+c5.metric("No Match Rate", m["core"]["no_match_rate"], format="percent")
+c6.metric("Not Authorized Rate", m["core"]["not_authorized_rate"], format="percent")
+c7.metric("Caller Not Interested Rate", m["core"]["caller_not_interested_rate"], format="percent")
+c8.metric("Incomplete Call Rate", m["core"]["incomplete_call_rate"], format="percent")
 
+st.subheader("Conversion Funnel")
+st.bar_chart(m["funnel"], color=TEAL, horizontal=True, sort=False)
+
+# Negotiation section
 st.header("Negotiation Metrics")
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Negotiation Success Rate", format_percent(m["negotiation"]["negotiation_success_rate"]))
-c2.metric("Negotiation Failed Rate", format_percent(m["negotiation"]["negotiation_failed_rate"]))
-c3.metric("Average Agreed Rate", format_currency(m["negotiation"]["average_agreed_rate"]))
-c4.metric("Average Negotiation Turns", format_number(m["negotiation"]["average_negotiation_turns"]))
+c1.metric("Negotiation Success Rate", m["negotiation"]["negotiation_success_rate"], format="percent")
+c2.metric("Negotiation Failed Rate", m["negotiation"]["negotiation_failed_rate"], format="percent")
+c3.metric(
+    "Average Agreed Rate",
+    m["negotiation"]["average_agreed_rate"],
+    delta=f"{m['negotiation']['agreed_delta_pct']}%",
+    delta_description="vs. recommended",
+    format="dollar",
+)
+c4.metric("Average Negotiation Turns", m["negotiation"]["average_negotiation_turns"], format="localized")
 
 # Sentiment charts
 st.header("Sentiment")
@@ -139,11 +156,11 @@ st.dataframe(
 left, right = st.columns(2)
 
 with left:
-    st.subheader("Origin Facility Usage By Hour")
+    st.subheader("Origin Facility Activity By Hour")
     st.dataframe(prettify(m["origin_by_hour"], index=True), use_container_width=True)
 
 with right:
-    st.subheader("Destination Facility Usage By Hour")
+    st.subheader("Destination Facility Activity By Hour")
     st.dataframe(prettify(m["destination_by_hour"], index=True), use_container_width=True)
 
 # Operational charts
@@ -164,4 +181,5 @@ st.header("Recent Calls")
 st.dataframe(
     prettify(m["recent_calls"], columns=True, values=["final_outcome", "sentiment"]),
     use_container_width=True,
+    hide_index=True
 )
