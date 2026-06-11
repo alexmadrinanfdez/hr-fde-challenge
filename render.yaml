@@ -1,0 +1,32 @@
+databases:
+  - name: inbound-carrier-sales-db
+    plan: free
+    databaseName: inbound_carrier_sales
+    user: postgres
+
+services:
+  - type: web
+    name: inbound-carrier-sales-api
+    runtime: docker
+    dockerfilePath: api/Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: inbound-carrier-sales-db
+          property: connectionString
+      - key: API_KEY
+        sync: false
+
+  - type: web
+    name: inbound-carrier-sales-dashboard
+    runtime: docker
+    dockerfilePath: dashboard/Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: inbound-carrier-sales-db
+          property: connectionString
