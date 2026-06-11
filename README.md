@@ -117,3 +117,4 @@ Or add it to a `.env` file in the project root (Docker Compose reads it automati
 - The dashboard reads directly from PostgreSQL, not through the API.
 - Import scripts shift timestamps using configurable anchor offsets to keep demo data current.
 - Run Streamlit with `python -m streamlit` to avoid import path issues.
+- A `render.yaml` blueprint is included for one-click deployment to [Render](https://render.com).
