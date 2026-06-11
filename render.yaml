@@ -2,7 +2,6 @@ databases:
   - name: inbound-carrier-sales-db
     plan: free
     databaseName: inbound_carrier_sales
-    user: postgres
 
 services:
   - type: web
