@@ -23,9 +23,11 @@ schema.sql     PostgreSQL schema
 
 Pass `X-Api-Key` header for protected endpoints. 
 
-## Local Setup
+## Setup
 
-### Environment
+### Native
+
+#### Environment
 
 ```bash
 python3 -m venv .venv
@@ -36,7 +38,7 @@ cp .env.template .env
 
 Edit `.env` with your PostgreSQL connection string.
 
-### Database
+#### Database
 
 ```bash
 createdb inbound_carrier_sales
@@ -47,7 +49,7 @@ python scripts/import_calls.py
 
 Loads must be imported before calls (to satisfy foreign key checks).
 
-### API Server
+#### API Server
 
 ```bash
 uvicorn api.main:app --reload
@@ -55,7 +57,7 @@ uvicorn api.main:app --reload
 
 Docs at `http://127.0.0.1:8000/docs`.
 
-#### API Key
+##### API Key
 
 Generate a key:
 
@@ -71,7 +73,7 @@ API_KEY=your_generated_key_here
 
 Leave `API_KEY` empty to disable authentication during local development.
 
-### Dashboard
+#### Dashboard
 
 ```bash
 python -m streamlit run dashboard/app.py
@@ -79,21 +81,21 @@ python -m streamlit run dashboard/app.py
 
 Opens at `http://localhost:8501`.
 
-## Docker Setup
+### Container
 
-### Start services
+#### Start services
 
 ```bash
 docker compose up --build
 ```
 
-### Seed data
+#### Seed data
 
 ```bash
 docker compose --profile seed up seed
 ```
 
-### Set the API key
+#### Set the API key
 
 Pass it via environment variable:
 
@@ -103,7 +105,7 @@ API_KEY=your_generated_key_here docker compose up --build
 
 Or add it to a `.env` file in the project root (Docker Compose reads it automatically).
 
-### Services
+#### Services
 
 | Service | URL |
 |---------|-----|
