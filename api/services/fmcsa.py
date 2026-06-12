@@ -27,7 +27,7 @@ def verify_carrier(mc_number: str) -> dict:
 
     try:
         with urllib.request.urlopen(req, timeout=FMCSA_TIMEOUT_SECONDS) as resp:
-            data = json.loads(resp.read())
+            data = json.loads(resp.read()).get("content", {})
     except urllib.error.HTTPError as e:
         if e.code == 404:
             return {
@@ -43,9 +43,7 @@ def verify_carrier(mc_number: str) -> dict:
     except TimeoutError:
         raise FMCSAError("fmcsa_timeout")
 
-    carrier = data.get("content", {}).get("carrier", {})
-
-    if not carrier:
+    if not data:
         return {
             "mc_number": mc_number,
             "legal_name": None,
@@ -54,10 +52,12 @@ def verify_carrier(mc_number: str) -> dict:
             "reason": "not_found",
         }
 
+    carrier = data.pop().get("carrier", {})
+
     return {
         "mc_number": mc_number,
         "legal_name": carrier.get("legalName"),
-        "dot_number": carrier.get("dotNumber"),
+        "dot_number": str(carrier.get("dotNumber")),
         "authorized": carrier.get("allowedToOperate") == "Y",
         "reason": None if carrier.get("allowedToOperate") == "Y" else "not_authorized",
     }
