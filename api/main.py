@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 
-from api.routers import calls, loads
+from api.routers import carriers, calls, loads
 from common.db import get_connection
 
 
 app = FastAPI(title="Inbound Carrier Sales API")
 
 
+app.include_router(carriers.router)
 app.include_router(loads.router)
 app.include_router(calls.router)
 

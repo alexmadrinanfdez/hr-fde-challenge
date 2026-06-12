@@ -31,6 +31,7 @@ class LoadOut(BaseModel):
     miles: Optional[float] = None
     dimensions: Optional[str] = None
 
+
 class CallCreate(BaseModel):
     call_id: Optional[str] = None
     call_started_at: datetime
@@ -76,6 +77,15 @@ class CallCreate(BaseModel):
             raise ValueError("call_ended_at must be >= call_started_at")
         return self
 
+
 class CallCreateResponse(BaseModel):
     call_id: str
     message: str
+
+
+class CarrierVerifyOut(BaseModel):
+    mc_number: str
+    legal_name: Optional[str] = None
+    dot_number: Optional[str] = None
+    authorized: bool
+    reason: Optional[str] = None
