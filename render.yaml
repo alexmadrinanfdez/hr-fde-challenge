@@ -17,6 +17,8 @@ services:
           property: connectionString
       - key: API_KEY
         sync: false
+      - key: FMCSA_WEB_KEY
+        sync: false
 
   - type: web
     name: inbound-carrier-sales-dashboard
