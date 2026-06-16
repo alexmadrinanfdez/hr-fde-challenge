@@ -48,10 +48,10 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
-    env_file:
-      - .env
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/inbound_carrier_sales
+      LOADS_CSV_PATH: /data/loads.csv
+      CALLS_CSV_PATH: /data/calls.csv
     volumes:
       - ./data:/data
       - ./scripts:/scripts

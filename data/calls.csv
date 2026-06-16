@@ -1,41 +1,41 @@
 call_id,call_started_at,call_ended_at,mc_number,carrier_authorized,requested_origin,requested_destination,requested_equipment,requested_pickup_window,matched_load_id,agreed_rate,negotiation_turns,final_outcome,sentiment,transcript_url
-CALL-0001,2026-06-10T08:00:00Z,2026-06-10T08:06:00Z,100001,true,"Chicago, IL","Dallas, TX","Dry Van","tomorrow morning",LD-10001,2150,3,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0001
-CALL-0002,2026-06-10T08:15:00Z,2026-06-10T08:21:00Z,100002,true,"Chicago, IL","Dallas, TX","Dry Van","today afternoon",LD-10001,,4,negotiation_failed,negative,https://example.com/transcripts/CALL-0002
-CALL-0003,2026-06-10T08:30:00Z,2026-06-10T08:33:00Z,100003,false,"Atlanta, GA","Orlando, FL","Reefer","today",,,0,carrier_not_verified,neutral,
-CALL-0004,2026-06-10T09:00:00Z,2026-06-10T09:04:00Z,100004,true,"Miami, FL","Houston, TX","Dry Van","tomorrow",,,0,no_matching_load,neutral,https://example.com/transcripts/CALL-0004
-CALL-0005,2026-06-10T09:10:00Z,2026-06-10T09:14:00Z,100005,true,"Newark, NJ","Columbus, OH","Dry Van","today evening",LD-10007,,2,caller_not_interested,negative,
-CALL-0006,2026-06-10T09:30:00Z,2026-06-10T09:38:00Z,100006,true,"Joliet, IL","Fort Worth, TX","Dry Van","tomorrow morning",LD-10002,2050,3,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0006
-CALL-0007,2026-06-10T10:00:00Z,2026-06-10T10:05:00Z,100007,true,"Gary, IN","Houston, TX","Dry Van","tomorrow",LD-10003,,3,negotiation_failed,negative,https://example.com/transcripts/CALL-0007
-CALL-0008,2026-06-10T10:20:00Z,2026-06-10T10:27:00Z,100008,true,"Savannah, GA","Miami, FL","Reefer","Friday morning",LD-10005,1925,2,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0008
-CALL-0009,2026-06-10T10:40:00Z,2026-06-10T10:43:00Z,100009,false,"Phoenix, AZ","Los Angeles, CA","Dry Van","today",,,0,carrier_not_verified,negative,
-CALL-0010,2026-06-10T11:00:00Z,2026-06-10T11:09:00Z,100010,true,"Charlotte, NC","Jacksonville, FL","Dry Van","tomorrow morning",LD-10006,1475,4,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0010
-CALL-0011,2026-06-10T11:20:00Z,2026-06-10T11:23:00Z,100011,true,"Phoenix, AZ","Los Angeles, CA","Dry Van","today afternoon",LD-10010,,1,caller_not_interested,neutral,
-CALL-0012,2026-06-10T11:40:00Z,2026-06-10T11:46:00Z,100012,true,"Ontario, CA","Las Vegas, NV","Dry Van","today",LD-10011,1050,2,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0012
-CALL-0013,2026-06-10T12:00:00Z,2026-06-10T12:04:00Z,100013,true,"Kansas City, MO","Denver, CO","Dry Van","tomorrow",LD-10013,,2,negotiation_failed,negative,
-CALL-0014,2026-06-10T12:15:00Z,2026-06-10T12:22:00Z,100014,true,"St. Louis, MO","Nashville, TN","Dry Van","today evening",LD-10014,1325,2,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0014
-CALL-0015,2026-06-10T12:35:00Z,2026-06-10T12:38:00Z,100015,true,"Seattle, WA","Boise, ID","Reefer","today",,,0,no_matching_load,neutral,
-CALL-0016,2026-06-10T13:00:00Z,2026-06-10T13:05:00Z,100016,true,"Memphis, TN","Little Rock, AR","Power Only","today afternoon",LD-10015,875,1,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0016
-CALL-0017,2026-06-10T13:15:00Z,2026-06-10T13:18:00Z,100017,false,"Laredo, TX","San Antonio, TX","Power Only","today",,,0,carrier_not_verified,neutral,https://example.com/transcripts/CALL-0017
-CALL-0018,2026-06-10T13:30:00Z,2026-06-10T13:39:00Z,100018,true,"Tulsa, OK","El Paso, TX","Flatbed","tomorrow morning",LD-10018,2450,3,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0018
-CALL-0019,2026-06-10T14:00:00Z,2026-06-10T14:06:00Z,100019,true,"Birmingham, AL","Charlotte, NC","Flatbed","Friday",LD-10019,,3,negotiation_failed,negative,
-CALL-0020,2026-06-10T14:20:00Z,2026-06-10T14:24:00Z,100020,true,"Fresno, CA","Seattle, WA","Reefer","tomorrow",LD-10016,2850,2,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0020
-CALL-0021,2026-06-10T14:40:00Z,2026-06-10T14:43:00Z,100021,true,"Yakima, WA","Boise, ID","Reefer","today evening",LD-10017,,2,caller_not_interested,neutral,
-CALL-0022,2026-06-10T15:00:00Z,2026-06-10T15:05:00Z,100022,true,"Allentown, PA","Indianapolis, IN","Dry Van","tomorrow morning",LD-10008,1775,2,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0022
-CALL-0023,2026-06-10T15:20:00Z,2026-06-10T15:27:00Z,100023,true,"Harrisburg, PA","Louisville, KY","Dry Van","today afternoon",LD-10009,1575,3,transferred_after_agreement,positive,
-CALL-0024,2026-06-10T15:40:00Z,2026-06-10T15:44:00Z,100024,true,"Chicago, IL","Houston, TX","Dry Van","tomorrow",,,0,no_matching_load,negative,https://example.com/transcripts/CALL-0024
-CALL-0025,2026-06-10T16:00:00Z,2026-06-10T16:02:00Z,100025,true,,,,,,,0,incomplete_call,neutral,
-CALL-0026,2026-06-10T16:15:00Z,2026-06-10T16:22:00Z,100026,true,"Chicago, IL","Dallas, TX","Dry Van","Friday morning",LD-10001,2175,4,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0026
-CALL-0027,2026-06-10T16:40:00Z,2026-06-10T16:46:00Z,100027,true,"Savannah, GA","Miami, FL","Reefer","tomorrow",LD-10005,,3,negotiation_failed,negative,https://example.com/transcripts/CALL-0027
-CALL-0028,2026-06-10T17:00:00Z,2026-06-10T17:06:00Z,100028,true,"Ontario, CA","Las Vegas, NV","Dry Van","today",LD-10011,1075,2,transferred_after_agreement,positive,
-CALL-0029,2026-06-10T17:20:00Z,2026-06-10T17:24:00Z,100029,true,"Kansas City, MO","Denver, CO","Dry Van","tomorrow afternoon",LD-10013,,2,caller_not_interested,neutral,https://example.com/transcripts/CALL-0029
-CALL-0030,2026-06-10T17:40:00Z,2026-06-10T17:48:00Z,100030,true,"Tulsa, OK","El Paso, TX","Flatbed","today evening",LD-10018,2475,3,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0030
-CALL-0031,2026-06-10T18:00:00Z,2026-06-10T18:05:00Z,100031,false,"Newark, NJ","Columbus, OH","Dry Van","today",,,0,carrier_not_verified,negative,
-CALL-0032,2026-06-10T18:15:00Z,2026-06-10T18:21:00Z,100032,true,"Memphis, TN","Little Rock, AR","Power Only","today",LD-10015,,2,negotiation_failed,negative,https://example.com/transcripts/CALL-0032
-CALL-0033,2026-06-10T18:40:00Z,2026-06-10T18:45:00Z,100033,true,"Laredo, TX","San Antonio, TX","Power Only","today afternoon",LD-10020,775,1,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0033
-CALL-0034,2026-06-10T19:00:00Z,2026-06-10T19:04:00Z,100034,true,"Phoenix, AZ","Los Angeles, CA","Dry Van","tomorrow",LD-10010,,1,caller_not_interested,neutral,
-CALL-0035,2026-06-10T19:20:00Z,2026-06-10T19:26:00Z,100035,true,"Fresno, CA","Seattle, WA","Reefer","Friday morning",LD-10016,2875,2,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0035
-CALL-0036,2026-06-10T19:40:00Z,2026-06-10T19:43:00Z,100036,true,"Unknown","Unknown","Dry Van","today",,,0,incomplete_call,negative,
-CALL-0037,2026-06-10T20:00:00Z,2026-06-10T20:06:00Z,100037,true,"Allentown, PA","Indianapolis, IN","Dry Van","tomorrow",LD-10008,1790,2,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0037
-CALL-0038,2026-06-10T20:20:00Z,2026-06-10T20:27:00Z,100038,true,"Harrisburg, PA","Louisville, KY","Dry Van","today",LD-10009,,3,negotiation_failed,negative,https://example.com/transcripts/CALL-0038
-CALL-0039,2026-06-10T20:40:00Z,2026-06-10T20:44:00Z,100039,true,"Birmingham, AL","Charlotte, NC","Flatbed","tomorrow",LD-10019,1675,2,transferred_after_agreement,positive,
-CALL-0040,2026-06-10T21:00:00Z,2026-06-10T21:04:00Z,100040,true,"Atlanta, GA","Orlando, FL","Reefer","today evening",LD-10004,1600,2,transferred_after_agreement,positive,https://example.com/transcripts/CALL-0040
+f47ac10b-58cc-4372-a567-0e02b2c3d479,2025-06-16 08:12,2025-06-16 08:18,734521,true,Dallas TX,Atlanta GA,Dry Van,2025-06-16,1,2300.00,2,booked,positive,
+9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d,2025-06-16 08:35,2025-06-16 08:38,891234,false,,,,,,,,not_verified,neutral,
+7c9e6679-7425-40de-944b-e07fc1f90ae7,2025-06-16 09:02,2025-06-16 09:09,456789,true,Los Angeles CA,Dallas TX,Dry Van,2025-06-16,2,2950.00,3,booked,positive,
+3fa85f64-5717-4562-b3fc-2c963f66afa6,2025-06-16 09:30,2025-06-16 09:34,312456,true,Chicago IL,Miami FL,Reefer,2025-06-16,,,,no_match,neutral,
+1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed,2025-06-16 10:05,2025-06-16 10:12,567890,true,Houston TX,Atlanta GA,Flatbed,2025-06-16,4,,3,no_agreement,negative,
+6ba7b810-9dad-41d4-80b5-fc4d0d1e3c27,2025-06-16 10:45,2025-06-16 10:51,678123,true,Atlanta GA,Miami FL,Dry Van,2025-06-16,5,1400.00,1,booked,positive,
+a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11,2025-06-16 11:20,2025-06-16 11:23,999888,false,,,,,,,,not_verified,neutral,
+b2c3d4e5-6f7a-4b8c-9d0e-1f2a3b4c5d6e,2025-06-16 11:55,2025-06-16 11:58,234567,true,Denver CO,Salt Lake City UT,Dry Van,2025-06-17,,,,no_match,neutral,
+c3d4e5f6-7a8b-4c9d-0e1f-2a3b4c5d6e7f,2025-06-16 13:10,2025-06-16 13:16,456789,true,Dallas TX,Chicago IL,Reefer,2025-06-17,7,2450.00,2,booked,positive,
+d4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8a,2025-06-16 14:00,2025-06-16 14:03,345678,true,Savannah GA,Atlanta GA,Dry Van,2025-06-16,6,650.00,1,booked,positive,
+e5f6a7b8-9c0d-4e1f-2a3b-4c5d6e7f8a9b,2025-06-17 07:30,2025-06-17 07:33,123456,true,Los Angeles CA,Phoenix AZ,Flatbed,2025-06-17,10,950.00,1,booked,positive,
+f6a7b8c9-0d1e-4f2a-3b4c-5d6e7f8a9b0c,2025-06-17 08:15,2025-06-17 08:21,789012,true,Seattle WA,Los Angeles CA,Reefer,2025-06-17,12,,3,no_agreement,negative,
+a7b8c9d0-1e2f-4a3b-4c5d-6e7f8a9b0c1d,2025-06-17 08:50,2025-06-17 08:53,654321,true,Chicago IL,Atlanta GA,Dry Van,2025-06-17,9,1850.00,2,booked,positive,
+b8c9d0e1-2f3a-4b4c-5d6e-7f8a9b0c1d2e,2025-06-17 09:30,2025-06-17 09:33,432198,true,New York NY,Philadelphia PA,Dry Van,2025-06-17,13,450.00,1,booked,positive,
+c9d0e1f2-3a4b-4c5d-6e7f-8a9b0c1d2e3f,2025-06-17 10:05,2025-06-17 10:08,876543,true,Atlanta GA,Nashville TN,Dry Van,2025-06-17,,,,no_match,neutral,
+d0e1f2a3-4b5c-4d6e-7f8a-9b0c1d2e3f4a,2025-06-17 10:40,2025-06-17 10:44,234567,true,Memphis TN,Dallas TX,Dry Van,2025-06-17,11,1500.00,2,booked,positive,
+e1f2a3b4-5c6d-4e7f-8a9b-0c1d2e3f4a5b,2025-06-17 11:15,2025-06-17 11:18,567890,true,Houston TX,Dallas TX,Dry Van,2025-06-17,14,,0,not_interested,negative,
+f2a3b4c5-6d7e-4f8a-9b0c-1d2e3f4a5b6c,2025-06-17 13:00,2025-06-17 13:03,111222,false,,,,,,,,not_verified,neutral,
+a3b4c5d6-7e8f-4a9b-0c1d-2e3f4a5b6c7d,2025-06-17 14:20,2025-06-17 14:26,345678,true,Laredo TX,Dallas TX,Dry Van,2025-06-17,8,1050.00,2,booked,positive,
+b4c5d6e7-8f9a-4b0c-1d2e-3f4a5b6c7d8e,2025-06-17 15:00,2025-06-17 15:02,987654,true,Chicago IL,Detroit MI,Dry Van,2025-06-18,17,650.00,1,booked,positive,
+c5d6e7f8-9a0b-4c1d-2e3f-4a5b6c7d8e9f,2025-06-18 07:10,2025-06-18 07:16,456789,true,Los Angeles CA,San Francisco CA,Reefer,2025-06-18,18,,3,no_agreement,negative,
+d6e7f8a9-0b1c-4d2e-3f4a-5b6c7d8e9f0a,2025-06-18 07:45,2025-06-18 07:48,734521,true,Dallas TX,Houston TX,Flatbed,2025-06-18,16,700.00,1,booked,positive,
+e7f8a9b0-1c2d-4e3f-4a5b-6c7d8e9f0a1b,2025-06-18 08:30,2025-06-18 08:35,678123,true,Kansas City MO,Chicago IL,Dry Van,2025-06-18,19,850.00,2,booked,positive,
+f8a9b0c1-2d3e-4f4a-5b6c-7d8e9f0a1b2c,2025-06-18 09:15,2025-06-18 09:18,312456,true,Jacksonville FL,Savannah GA,Dry Van,2025-06-18,20,500.00,1,booked,positive,
+a9b0c1d2-3e4f-4a5b-6c7d-8e9f0a1b2c3d,2025-06-18 09:50,2025-06-18 09:53,891234,true,Atlanta GA,Charlotte NC,Dry Van,2025-06-18,15,,0,not_interested,neutral,
+b0c1d2e3-4f5a-4b6c-7d8e-9f0a1b2c3d4e,2025-06-18 10:30,2025-06-18 10:36,567890,true,Dallas TX,Memphis TN,Dry Van,2025-06-18,21,1050.00,2,booked,positive,
+c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f,2025-06-18 11:00,2025-06-18 11:02,444555,true,Portland OR,Seattle WA,Reefer,2025-06-18,,,,no_match,neutral,
+d2e3f4a5-6b7c-4d8e-9f0a-1b2c3d4e5f6a,2025-06-18 14:00,2025-06-18 14:03,234567,true,Chicago IL,Minneapolis MN,Dry Van,2025-06-19,25,1250.00,2,booked,positive,
+e3f4a5b6-7c8d-4e9f-0a1b-2c3d4e5f6a7b,2025-06-19 07:20,2025-06-19 07:26,789012,true,Los Angeles CA,Denver CO,Dry Van,2025-06-19,27,,3,no_agreement,negative,
+f4a5b6c7-8d9e-4f0a-1b2c-3d4e5f6a7b8c,2025-06-19 08:00,2025-06-19 08:06,456789,true,Miami FL,Atlanta GA,Reefer,2025-06-19,28,1600.00,2,booked,positive,
+a5b6c7d8-9e0f-4a1b-2c3d-4e5f6a7b8c9d,2025-06-19 08:40,2025-06-19 08:43,654321,true,Laredo TX,Houston TX,Dry Van,2025-06-19,26,900.00,1,booked,positive,
+b6c7d8e9-0f1a-4b2c-3d4e-5f6a7b8c9d0e,2025-06-19 09:15,2025-06-19 09:18,876543,true,Houston TX,New Orleans LA,Flatbed,2025-06-19,24,,0,not_interested,neutral,
+c7d8e9f0-1a2b-4c3d-4e5f-6a7b8c9d0e1f,2025-06-19 10:00,2025-06-19 10:03,333444,false,,,,,,,,not_verified,neutral,
+d8e9f0a1-2b3c-4d4e-5f6a-7b8c9d0e1f2a,2025-06-19 10:45,2025-06-19 10:51,734521,true,Atlanta GA,Jacksonville FL,Reefer,2025-06-19,23,1000.00,2,booked,positive,
+e9f0a1b2-3c4d-4e5f-6a7b-8c9d0e1f2a3b,2025-06-19 11:30,2025-06-19 11:33,345678,true,San Antonio TX,Laredo TX,Dry Van,2025-06-19,29,450.00,1,booked,positive,
+f0a1b2c3-4d5e-4f6a-7b8c-9d0e1f2a3b4c,2025-06-19 13:00,2025-06-19 13:02,567890,true,Phoenix AZ,Los Angeles CA,Dry Van,2025-06-19,22,,0,not_interested,negative,
+a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d,2025-06-19 14:00,2025-06-19 14:06,123456,true,Charlotte NC,New York NY,Dry Van,2025-06-20,30,1700.00,2,booked,positive,
+b2c3d4e5-6f7a-4b8c-9d0e-1f2a3b4c5d6f,2025-06-19 14:45,2025-06-19 14:48,987654,true,Dallas TX,Atlanta GA,Dry Van,2025-06-20,,,,incomplete,neutral,
+c3d4e5f6-7a8b-4c9d-0e1f-2a3b4c5d6e7a,2025-06-19 15:30,2025-06-19 15:33,222333,true,Nashville TN,Memphis TN,Dry Van,2025-06-20,,,,no_match,neutral,
+d4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8b,2025-06-20 07:00,2025-06-20 07:05,456789,true,Chicago IL,New York NY,Reefer,2025-06-20,3,2650.00,2,booked,positive,

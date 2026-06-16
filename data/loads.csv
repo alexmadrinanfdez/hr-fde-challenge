@@ -1,21 +1,31 @@
 load_id,origin,destination,pickup_datetime,delivery_datetime,equipment_type,loadboard_rate,notes,weight,commodity_type,num_of_pieces,miles,dimensions
-LD-10001,"Chicago, IL","Dallas, TX",2026-06-05T09:00:00Z,2026-06-06T18:00:00Z,"Dry Van",2200,"Dock pickup. No hazmat.",18000,"Retail Goods",24,925,"48x40 pallets"
-LD-10002,"Joliet, IL","Fort Worth, TX",2026-06-05T12:00:00Z,2026-06-06T20:00:00Z,"Dry Van",2100,"FCFS pickup. Lumper may apply.",22000,"Consumer Packaged Goods",26,940,"26 pallets"
-LD-10003,"Gary, IN","Houston, TX",2026-06-06T08:30:00Z,2026-06-07T22:00:00Z,"Dry Van",2450,"Drop trailer preferred.",30000,"Paper Products",30,1080,"30 pallets"
-LD-10004,"Atlanta, GA","Orlando, FL",2026-06-05T10:00:00Z,2026-06-05T22:00:00Z,"Reefer",1650,"Maintain 36F throughout transit.",12000,"Produce",18,440,"18 pallets"
-LD-10005,"Savannah, GA","Miami, FL",2026-06-06T14:00:00Z,2026-06-07T08:00:00Z,"Reefer",1950,"Frozen product. Continuous temp monitoring required.",16000,"Frozen Foods",20,485,"20 pallets"
-LD-10006,"Charlotte, NC","Jacksonville, FL",2026-06-07T07:00:00Z,2026-06-07T19:00:00Z,"Dry Van",1500,"Live load and live unload.",14000,"Home Goods",22,400,"22 pallets"
-LD-10007,"Newark, NJ","Columbus, OH",2026-06-05T13:00:00Z,2026-06-06T05:00:00Z,"Dry Van",1700,"Appointment pickup required.",20000,"Electronics",22,535,"22 pallets"
-LD-10008,"Allentown, PA","Indianapolis, IN",2026-06-06T09:30:00Z,2026-06-07T01:00:00Z,"Dry Van",1800,"No driver assist.",24000,"Packaging Materials",28,620,"28 pallets"
-LD-10009,"Harrisburg, PA","Louisville, KY",2026-06-07T11:00:00Z,2026-06-07T23:30:00Z,"Dry Van",1600,"Must check in 30 mins before appointment.",21000,"Auto Parts",24,540,"24 pallets"
-LD-10010,"Phoenix, AZ","Los Angeles, CA",2026-06-05T15:00:00Z,2026-06-06T01:00:00Z,"Dry Van",1400,"Team service not required.",10000,"Apparel",16,375,"16 pallets"
-LD-10011,"Ontario, CA","Las Vegas, NV",2026-06-06T08:00:00Z,2026-06-06T16:00:00Z,"Dry Van",1100,"Same-day delivery preferred.",9000,"Beverages",14,235,"14 pallets"
-LD-10012,"Stockton, CA","Phoenix, AZ",2026-06-07T06:00:00Z,2026-06-07T23:00:00Z,"Flatbed",2300,"Tarps required.",28000,"Construction Materials",12,760,"12 bundles"
-LD-10013,"Kansas City, MO","Denver, CO",2026-06-05T07:30:00Z,2026-06-06T00:30:00Z,"Dry Van",1750,"Pickup from distribution center.",19000,"Retail Goods",20,605,"20 pallets"
-LD-10014,"St. Louis, MO","Nashville, TN",2026-06-06T10:30:00Z,2026-06-06T22:30:00Z,"Dry Van",1350,"No overnight parking on site.",15000,"Food Packaging",18,310,"18 pallets"
-LD-10015,"Memphis, TN","Little Rock, AR",2026-06-07T09:00:00Z,2026-06-07T15:00:00Z,"Power Only",900,"Trailer preloaded and ready.",0,"General Freight",0,140,"N/A"
-LD-10016,"Fresno, CA","Seattle, WA",2026-06-05T05:00:00Z,2026-06-06T23:00:00Z,"Reefer",2900,"Keep at 34F. Produce load.",26000,"Produce",24,890,"24 pallets"
-LD-10017,"Yakima, WA","Boise, ID",2026-06-06T06:30:00Z,2026-06-06T18:30:00Z,"Reefer",1450,"Chilled apples. Temp-sensitive.",18000,"Fresh Fruit",20,285,"20 pallets"
-LD-10018,"Tulsa, OK","El Paso, TX",2026-06-07T08:00:00Z,2026-06-08T00:00:00Z,"Flatbed",2500,"Straps and edge protection required.",32000,"Steel Coils",8,725,"8 coils"
-LD-10019,"Birmingham, AL","Charlotte, NC",2026-06-05T11:00:00Z,2026-06-06T02:00:00Z,"Flatbed",1700,"Tarping not required.",22000,"Lumber",16,390,"16 bundles"
-LD-10020,"Laredo, TX","San Antonio, TX",2026-06-06T13:00:00Z,2026-06-06T18:00:00Z,"Power Only",800,"Short haul. Quick turn.",0,"General Freight",0,160,"N/A"
+1,Dallas TX,Atlanta GA,2025-06-16 06:00,2025-06-17 18:00,Dry Van,2450.00,No-touch freight,42000,Consumer Electronics,24,780,
+2,Los Angeles CA,Dallas TX,2025-06-16 08:00,2025-06-18 08:00,Dry Van,3200.00,,38000,Retail Goods,30,1435,
+3,Chicago IL,New York NY,2025-06-16 07:00,2025-06-17 12:00,Reefer,2800.00,Temperature 34F,41000,Produce,20,790,
+4,Houston TX,Atlanta GA,2025-06-16 10:00,2025-06-17 14:00,Flatbed,2100.00,Tarping required,44000,Steel Coils,6,790,48x96
+5,Atlanta GA,Miami FL,2025-06-16 12:00,2025-06-17 08:00,Dry Van,1450.00,,36000,Beverages,28,660,
+6,Savannah GA,Atlanta GA,2025-06-16 14:00,2025-06-16 20:00,Dry Van,650.00,Port container relay,43000,Imported Furniture,18,250,
+7,Dallas TX,Chicago IL,2025-06-17 06:00,2025-06-18 10:00,Reefer,2600.00,Temperature 0F,39000,Frozen Meat,22,920,
+8,Laredo TX,Dallas TX,2025-06-17 05:00,2025-06-17 14:00,Dry Van,1100.00,Cross-border shipment,40000,Auto Parts,32,440,
+9,Chicago IL,Atlanta GA,2025-06-17 08:00,2025-06-18 12:00,Dry Van,1950.00,,37000,Paper Products,26,720,
+10,Los Angeles CA,Phoenix AZ,2025-06-17 07:00,2025-06-17 16:00,Flatbed,950.00,Oversized permit needed,48000,Lumber,12,370,60x120
+11,Memphis TN,Dallas TX,2025-06-17 09:00,2025-06-18 06:00,Dry Van,1600.00,,35000,Retail Distribution,24,450,
+12,Seattle WA,Los Angeles CA,2025-06-17 06:00,2025-06-18 18:00,Reefer,2900.00,Temperature 38F,40000,Seafood,16,1135,
+13,New York NY,Philadelphia PA,2025-06-17 10:00,2025-06-17 14:00,Dry Van,450.00,Liftgate required,22000,Medical Supplies,8,95,
+14,Houston TX,Dallas TX,2025-06-17 11:00,2025-06-17 16:00,Dry Van,750.00,,34000,Packaging Materials,20,240,
+15,Atlanta GA,Charlotte NC,2025-06-18 06:00,2025-06-18 14:00,Dry Van,850.00,,30000,Textiles,18,245,
+16,Dallas TX,Houston TX,2025-06-18 07:00,2025-06-18 12:00,Flatbed,700.00,,46000,Construction Materials,10,240,48x96
+17,Chicago IL,Detroit MI,2025-06-18 06:00,2025-06-18 12:00,Dry Van,650.00,,38000,Auto Parts,22,280,
+18,Los Angeles CA,San Francisco CA,2025-06-18 08:00,2025-06-18 18:00,Reefer,1200.00,Temperature 36F,35000,Dairy Products,14,380,
+19,Kansas City MO,Chicago IL,2025-06-18 07:00,2025-06-18 16:00,Dry Van,900.00,,33000,Food & Beverage,20,510,
+20,Jacksonville FL,Savannah GA,2025-06-18 09:00,2025-06-18 14:00,Dry Van,500.00,,28000,Consumer Goods,16,140,
+21,Dallas TX,Memphis TN,2025-06-18 10:00,2025-06-18 20:00,Dry Van,1100.00,,36000,Electronics,18,450,
+22,Phoenix AZ,Los Angeles CA,2025-06-19 06:00,2025-06-19 14:00,Dry Van,850.00,,32000,Household Goods,22,370,
+23,Atlanta GA,Jacksonville FL,2025-06-19 07:00,2025-06-19 14:00,Reefer,1050.00,Temperature 32F,39000,Poultry,20,345,
+24,Houston TX,New Orleans LA,2025-06-19 08:00,2025-06-19 14:00,Flatbed,800.00,,45000,Pipe & Tubing,8,350,60x96
+25,Chicago IL,Minneapolis MN,2025-06-19 06:00,2025-06-19 16:00,Dry Van,1300.00,,34000,Retail Goods,24,410,
+26,Laredo TX,Houston TX,2025-06-19 05:00,2025-06-19 12:00,Dry Van,900.00,Cross-border NAFTA,42000,Produce,30,320,
+27,Los Angeles CA,Denver CO,2025-06-19 07:00,2025-06-20 12:00,Dry Van,2100.00,,37000,Consumer Electronics,20,1020,
+28,Miami FL,Atlanta GA,2025-06-19 10:00,2025-06-20 06:00,Reefer,1650.00,Temperature 34F,38000,Tropical Fruit,22,660,
+29,San Antonio TX,Laredo TX,2025-06-19 11:00,2025-06-19 15:00,Dry Van,450.00,,25000,Empty Pallets,40,155,
+30,Charlotte NC,New York NY,2025-06-20 06:00,2025-06-20 22:00,Dry Van,1800.00,,36000,Furniture,14,635,
