@@ -31,6 +31,6 @@ services:
         fromService:
           name: inbound-carrier-sales-api
           type: web
-          property: hostURL
+          property: host
       - key: API_KEY
         sync: false
