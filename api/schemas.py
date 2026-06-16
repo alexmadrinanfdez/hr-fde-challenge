@@ -86,6 +86,24 @@ class CallCreate(BaseModel):
         return self
 
 
+class CallOut(BaseModel):
+    call_id: str
+    call_started_at: datetime
+    call_ended_at: datetime
+    mc_number: str
+    carrier_authorized: bool
+    requested_origin: Optional[str] = None
+    requested_destination: Optional[str] = None
+    requested_equipment: Optional[str] = None
+    requested_pickup_window: Optional[str] = None
+    matched_load_id: Optional[str] = None
+    agreed_rate: Optional[float] = None
+    negotiation_turns: Optional[int] = None
+    final_outcome: FinalOutcome
+    sentiment: Sentiment
+    transcript_url: Optional[str] = None
+
+
 class CallCreateResponse(BaseModel):
     call_id: str
     message: str

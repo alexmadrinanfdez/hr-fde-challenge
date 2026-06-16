@@ -2,11 +2,49 @@ from fastapi import APIRouter, Depends, HTTPException
 from psycopg.errors import CheckViolation, ForeignKeyViolation, UniqueViolation
 
 from api.auth import verify_api_key
-from api.schemas import CallCreate, CallCreateResponse
+from api.schemas import CallCreate, CallCreateResponse, CallOut
 from common.db import get_connection
 
 
 router = APIRouter(tags=["calls"])
+
+
+@router.get(
+    "/calls",
+    response_model=list[CallOut],
+    dependencies=[Depends(verify_api_key)],
+)
+def list_calls():
+    query = """
+    SELECT
+        call_id,
+        call_started_at,
+        call_ended_at,
+        mc_number,
+        carrier_authorized,
+        requested_origin,
+        requested_destination,
+        requested_equipment,
+        requested_pickup_window,
+        matched_load_id,
+        agreed_rate,
+        negotiation_turns,
+        final_outcome,
+        sentiment,
+        transcript_url
+    FROM calls
+    ORDER BY call_started_at DESC
+    """
+
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(query)
+                rows = cur.fetchall()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch calls: {e}")
+
+    return [CallOut(**row) for row in rows]
 
 
 @router.post(

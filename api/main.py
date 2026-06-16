@@ -1,22 +1,15 @@
-from fastapi import FastAPI
-from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 
-load_dotenv()
+from dotenv import load_dotenv
+from fastapi import FastAPI
 
 from api.routers import carriers, calls, loads
 from common.db import get_connection
 
 
-app = FastAPI(title="Inbound Carrier Sales API")
-
-
-app.include_router(carriers.router)
-app.include_router(loads.router)
-app.include_router(calls.router)
-
-
-@app.on_event("startup")
-def startup_check():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    load_dotenv()
     try:
         with get_connection() as conn:
             with conn.cursor() as cur:
@@ -24,6 +17,15 @@ def startup_check():
                 cur.fetchone()
     except Exception as e:
         raise RuntimeError(f"Database connection failed during startup: {e}") from e
+    yield
+
+
+app = FastAPI(title="Inbound Carrier Sales API", lifespan=lifespan)
+
+
+app.include_router(carriers.router)
+app.include_router(loads.router)
+app.include_router(calls.router)
 
 
 @app.get("/health")
