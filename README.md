@@ -95,13 +95,13 @@ Opens at `http://localhost:8501`.
 #### Start services
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
 #### Seed data
 
 ```bash
-docker compose --profile seed up seed
+docker compose run --rm seed
 ```
 
 #### Environment
