@@ -28,9 +28,9 @@ services:
     plan: free
     envVars:
       - key: API_BASE_URL
+        sync: false
+      - key: API_KEY
         fromService:
           name: inbound-carrier-sales-api
           type: web
-          property: hostURL
-      - key: API_KEY
-        sync: false
+          envVarKey: API_KEY
