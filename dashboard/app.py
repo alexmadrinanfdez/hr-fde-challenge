@@ -1,8 +1,9 @@
-import pandas as pd
-import streamlit as st
 from dotenv import load_dotenv
 
 load_dotenv()
+
+import pandas as pd
+import streamlit as st
 
 from dashboard.queries import get_calls, get_loads
 from dashboard.metrics import compute
@@ -16,13 +17,22 @@ st.set_page_config(page_title="Inbound Carrier Sales Dashboard", layout="wide")
 st.title("Inbound Carrier Sales Dashboard")
 st.caption("Operational analytics for inbound carrier call performance and freight matching.")
 
+OUTCOME_LABELS = {
+    "booked": "Booked",
+    "no_agreement": "No Agreement",
+    "no_match": "No Match",
+    "not_verified": "Not Verified",
+    "not_interested": "Not Interested",
+    "incomplete": "Incomplete",
+}
+
 OUTCOME_SHORT = {
-    "Transferred After Agreement": "Transferred",
-    "Negotiation Failed": "Neg. Failed",
-    "No Matching Load": "No Match",
-    "Carrier Not Verified": "Not Verified",
-    "Caller Not Interested": "Not Interested",
-    "Incomplete Call": "Incomplete",
+    "Booked": "Booked",
+    "No Agreement": "No Agmt.",
+    "No Match": "No Match",
+    "Not Verified": "Not Verif.",
+    "Not Interested": "Not Int.",
+    "Incomplete": "Incomplete",
 }
 
 
@@ -31,7 +41,7 @@ def titleize(value):
         return "Unknown"
     if not isinstance(value, str):
         return value
-    return value.replace("_", " ").strip().title() or "Unknown"
+    return OUTCOME_LABELS.get(value, value.replace("_", " ").strip().title()) or "Unknown"
 
 
 def prettify(df, index=False, columns=False, values=None):
@@ -102,7 +112,7 @@ c4.metric("Transfer Rate", m["core"]["transfer_rate"], format="percent")
 c5, c6, c7, c8 = st.columns(4)
 c5.metric("No Match Rate", m["core"]["no_match_rate"], format="percent")
 c6.metric("Not Authorized Rate", m["core"]["not_authorized_rate"], format="percent")
-c7.metric("Caller Not Interested Rate", m["core"]["caller_not_interested_rate"], format="percent")
+c7.metric("Not Interested Rate", m["core"]["caller_not_interested_rate"], format="percent")
 c8.metric("Incomplete Call Rate", m["core"]["incomplete_call_rate"], format="percent")
 
 st.subheader("Conversion Funnel")

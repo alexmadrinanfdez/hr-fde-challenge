@@ -32,12 +32,12 @@ CREATE TABLE calls (
     negotiation_turns INTEGER CHECK (negotiation_turns IS NULL OR negotiation_turns >= 0),
     final_outcome TEXT NOT NULL CHECK (
         final_outcome IN (
-            'transferred_after_agreement',
-            'negotiation_failed',
-            'no_matching_load',
-            'carrier_not_verified',
-            'caller_not_interested',
-            'incomplete_call'
+            'booked',
+            'no_agreement',
+            'no_match',
+            'not_verified',
+            'not_interested',
+            'incomplete'
         )
     ),
     sentiment TEXT NOT NULL CHECK (

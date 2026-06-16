@@ -5,12 +5,12 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 FinalOutcome = Literal[
-    "transferred_after_agreement",
-    "negotiation_failed",
-    "no_matching_load",
-    "carrier_not_verified",
-    "caller_not_interested",
-    "incomplete_call",
+    "booked",
+    "no_agreement",
+    "no_match",
+    "not_verified",
+    "not_interested",
+    "incomplete",
 ]
 
 Sentiment = Literal["positive", "neutral", "negative"]

@@ -13,7 +13,7 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
     matched = calls[calls["matched_load_id"].notna()].merge(
         loads, left_on="matched_load_id", right_on="load_id", how="inner"
     )
-    transferred = matched[matched["final_outcome"] == "transferred_after_agreement"]
+    transferred = matched[matched["final_outcome"] == "booked"]
 
     calls = calls.copy()
     calls["duration_seconds"] = (
@@ -25,37 +25,37 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
         "authorized_carrier_rate": _rate(int(calls["carrier_authorized"].sum()), total),
         "load_match_rate": _rate(int(calls["matched_load_id"].notna().sum()), total),
         "transfer_rate": _rate(
-            int((calls["final_outcome"] == "transferred_after_agreement").sum()), total
+            int((calls["final_outcome"] == "booked").sum()), total
         ),
         "no_match_rate": _rate(
-            int((calls["final_outcome"] == "no_matching_load").sum()), total
+            int((calls["final_outcome"] == "no_match").sum()), total
         ),
         "not_authorized_rate": _rate(
-            int((calls["final_outcome"] == "carrier_not_verified").sum()), total
+            int((calls["final_outcome"] == "not_verified").sum()), total
         ),
         "caller_not_interested_rate": _rate(
-            int((calls["final_outcome"] == "caller_not_interested").sum()), total
+            int((calls["final_outcome"] == "not_interested").sum()), total
         ),
         "incomplete_call_rate": _rate(
-            int((calls["final_outcome"] == "incomplete_call").sum()), total
+            int((calls["final_outcome"] == "incomplete").sum()), total
         ),
     }
 
-    stages = ["Total Calls", "Authorized", "Load Matched", "Transferred"]
+    stages = ["Total Calls", "Authorized", "Load Matched", "Booked"]
     funnel = pd.DataFrame(
         {
             "count": [
                 total,
                 int(calls["carrier_authorized"].sum()),
                 int(calls["matched_load_id"].notna().sum()),
-                int((calls["final_outcome"] == "transferred_after_agreement").sum()),
+                int((calls["final_outcome"] == "booked").sum()),
             ],
         },
         index=pd.CategoricalIndex(stages, categories=stages, ordered=True),
     )
 
     negotiation_outcomes = calls[
-        calls["final_outcome"].isin(["transferred_after_agreement", "negotiation_failed"])
+        calls["final_outcome"].isin(["booked", "no_agreement"])
     ]
     negotiation_total = len(negotiation_outcomes)
 
@@ -75,11 +75,11 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
 
     negotiation = {
         "negotiation_success_rate": _rate(
-            int((negotiation_outcomes["final_outcome"] == "transferred_after_agreement").sum()),
+            int((negotiation_outcomes["final_outcome"] == "booked").sum()),
             negotiation_total,
         ),
         "negotiation_failed_rate": _rate(
-            int((negotiation_outcomes["final_outcome"] == "negotiation_failed").sum()),
+            int((negotiation_outcomes["final_outcome"] == "no_agreement").sum()),
             negotiation_total,
         ),
         "average_agreed_rate": average_agreed_rate,
@@ -122,7 +122,7 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
             total_matched_calls=("call_id", "count"),
             transferred_calls=(
                 "final_outcome",
-                lambda x: (x == "transferred_after_agreement").sum(),
+                lambda x: (x == "booked").sum(),
             ),
         )
         .reset_index()

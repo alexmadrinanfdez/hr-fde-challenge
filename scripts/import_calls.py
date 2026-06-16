@@ -22,13 +22,12 @@ REQUIRED_COLUMNS = [
 
 
 VALID_FINAL_OUTCOMES = {
-    "transferred_after_agreement",
-    "negotiation_failed",
-    "no_matching_load",
-    "carrier_not_verified",
-    "caller_not_interested",
-    "incomplete_call",
-}
+    "booked",
+    "no_agreement",
+    "no_match",
+    "not_verified",
+    "not_interested",
+    "incomplete"}
 
 
 VALID_SENTIMENTS = {
