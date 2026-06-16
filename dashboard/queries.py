@@ -5,6 +5,9 @@ import urllib.request
 
 def _get(path: str) -> list[dict]:
     base_url = os.environ.get("API_BASE_URL", "http://localhost:8000")
+    if not base_url.startswith("http"):
+        base_url = f"https://{base_url}"
+
     api_key = os.environ.get("API_KEY", "")
 
     headers = {"Accept": "application/json"}
