@@ -37,12 +37,11 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/inbound_carrier_sales
+      API_BASE_URL: http://api:8000
     ports:
       - "8501:8501"
     depends_on:
-      db:
-        condition: service_healthy
+      - api
 
   seed:
     build:

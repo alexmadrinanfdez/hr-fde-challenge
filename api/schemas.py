@@ -96,7 +96,7 @@ class CallOut(BaseModel):
     requested_destination: Optional[str] = None
     requested_equipment: Optional[str] = None
     requested_pickup_window: Optional[str] = None
-    matched_load_id: Optional[str] = None
+    matched_load_id: Optional[int] = None
     agreed_rate: Optional[float] = None
     negotiation_turns: Optional[int] = None
     final_outcome: FinalOutcome
