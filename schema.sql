@@ -1,5 +1,6 @@
+-- Loads table
 CREATE TABLE loads (
-    load_id TEXT PRIMARY KEY,
+    load_id SERIAL PRIMARY KEY,
     origin TEXT NOT NULL,
     destination TEXT NOT NULL,
     pickup_datetime TIMESTAMPTZ NOT NULL,
@@ -15,6 +16,7 @@ CREATE TABLE loads (
     CHECK (delivery_datetime >= pickup_datetime)
 );
 
+-- Calls table
 CREATE TABLE calls (
     call_id TEXT PRIMARY KEY,
     call_started_at TIMESTAMPTZ NOT NULL,
@@ -25,7 +27,7 @@ CREATE TABLE calls (
     requested_destination TEXT,
     requested_equipment TEXT,
     requested_pickup_window TEXT,
-    matched_load_id TEXT REFERENCES loads(load_id),
+    matched_load_id INTEGER REFERENCES loads(load_id),
     agreed_rate NUMERIC CHECK (agreed_rate IS NULL OR agreed_rate >= 0),
     negotiation_turns INTEGER CHECK (negotiation_turns IS NULL OR negotiation_turns >= 0),
     final_outcome TEXT NOT NULL CHECK (
@@ -49,15 +51,9 @@ CREATE TABLE calls (
     CHECK (call_ended_at >= call_started_at)
 );
 
--- Indexes to support common filtering
+-- Indexes
 CREATE INDEX idx_loads_origin ON loads (LOWER(origin));
 CREATE INDEX idx_loads_destination ON loads (LOWER(destination));
-CREATE INDEX idx_loads_equipment_type ON loads (LOWER(equipment_type));
-CREATE INDEX idx_loads_pickup_datetime ON loads (pickup_datetime);
-CREATE INDEX idx_loads_delivery_datetime ON loads (delivery_datetime);
 
 CREATE INDEX idx_calls_mc_number ON calls (mc_number);
-CREATE INDEX idx_calls_final_outcome ON calls (final_outcome);
-CREATE INDEX idx_calls_sentiment ON calls (sentiment);
 CREATE INDEX idx_calls_started_at ON calls (call_started_at);
-CREATE INDEX idx_calls_matched_load_id ON calls (matched_load_id);

@@ -17,7 +17,7 @@ Sentiment = Literal["positive", "neutral", "negative"]
 
 
 class LoadOut(BaseModel):
-    load_id: str
+    load_id: int
     origin: str
     destination: str
     pickup_datetime: datetime
@@ -33,7 +33,7 @@ class LoadOut(BaseModel):
 
 
 class CallCreate(BaseModel):
-    call_id: Optional[str] = None
+    call_id: str = Field(min_length=1)
     call_started_at: datetime
     call_ended_at: datetime
     mc_number: str = Field(min_length=1)
@@ -42,7 +42,7 @@ class CallCreate(BaseModel):
     requested_destination: Optional[str] = None
     requested_equipment: Optional[str] = None
     requested_pickup_window: Optional[str] = None
-    matched_load_id: Optional[str] = None
+    matched_load_id: Optional[int] = None
     agreed_rate: Optional[float] = None
     negotiation_turns: Optional[int] = None
     final_outcome: FinalOutcome
@@ -69,6 +69,14 @@ class CallCreate(BaseModel):
         trimmed = value.strip()
         if not trimmed:
             raise ValueError("mc_number must not be empty")
+        return trimmed
+
+    @field_validator("call_id")
+    @classmethod
+    def validate_call_id(cls, value):
+        trimmed = value.strip()
+        if not trimmed:
+            raise ValueError("call_id must not be empty")
         return trimmed
 
     @model_validator(mode="after")

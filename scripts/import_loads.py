@@ -90,7 +90,7 @@ def validate_columns(fieldnames):
 def normalize_row(row: dict) -> dict:
     normalized = {}
 
-    normalized["load_id"] = require_non_empty(row, "load_id")
+    normalized["load_id"] = int(require_non_empty(row, "load_id"))
     normalized["origin"] = require_non_empty(row, "origin")
     normalized["destination"] = require_non_empty(row, "destination")
     normalized["pickup_datetime"] = parse_iso_datetime(require_non_empty(row, "pickup_datetime"))
@@ -186,6 +186,12 @@ def upsert_loads(conn, rows):
         cur.executemany(sql, rows)
 
 
+def reset_sequence(conn):
+    sql = "SELECT setval('loads_load_id_seq', (SELECT COALESCE(MAX(load_id), 1) FROM loads))"
+    with conn.cursor() as cur:
+        cur.execute(sql)
+
+
 def main():
     load_dotenv()
 
@@ -241,6 +247,7 @@ def main():
         with psycopg.connect(db_url) as conn:
             with conn.transaction():
                 upsert_loads(conn, shifted_rows)
+                reset_sequence(conn)
         print(
             f"Successfully imported {len(shifted_rows)} load(s) from {csv_path} "
             # f"with pickup times shifted by anchor offset {anchor_offset_hours} hour(s)."

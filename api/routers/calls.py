@@ -1,5 +1,3 @@
-import uuid
-
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg.errors import CheckViolation, ForeignKeyViolation, UniqueViolation
 
@@ -18,8 +16,6 @@ router = APIRouter(tags=["calls"])
     dependencies=[Depends(verify_api_key)],
 )
 def create_call(payload: CallCreate):
-    call_id = payload.call_id or str(uuid.uuid4())
-
     insert_sql = """
     INSERT INTO calls (
         call_id,
@@ -57,7 +53,7 @@ def create_call(payload: CallCreate):
     """
 
     values = {
-        "call_id": call_id,
+        "call_id": payload.call_id,
         "call_started_at": payload.call_started_at,
         "call_ended_at": payload.call_ended_at,
         "mc_number": payload.mc_number,
@@ -101,6 +97,6 @@ def create_call(payload: CallCreate):
         )
 
     return CallCreateResponse(
-        call_id=call_id,
+        call_id=payload.call_id,
         message="Call saved successfully",
     )
