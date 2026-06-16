@@ -3,7 +3,7 @@ from psycopg.errors import CheckViolation, ForeignKeyViolation, UniqueViolation
 
 from api.auth import verify_api_key
 from api.schemas import CallCreate, CallCreateResponse, CallOut
-from common.db import get_connection
+from api.db import get_connection
 
 
 router = APIRouter(tags=["calls"])

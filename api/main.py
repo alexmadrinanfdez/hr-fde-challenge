@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from api.routers import carriers, calls, loads
-from common.db import get_connection
+from api.db import get_connection
 
 
 @asynccontextmanager

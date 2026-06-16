@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from api.auth import verify_api_key
 from api.schemas import LoadOut
-from common.db import get_connection
+from api.db import get_connection
 
 
 router = APIRouter(tags=["loads"])
