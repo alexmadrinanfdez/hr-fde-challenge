@@ -47,7 +47,6 @@ class CallCreate(BaseModel):
     negotiation_turns: Optional[int] = None
     final_outcome: FinalOutcome
     sentiment: Sentiment
-    transcript_url: Optional[str] = None
 
     @field_validator("agreed_rate")
     @classmethod
@@ -101,7 +100,6 @@ class CallOut(BaseModel):
     negotiation_turns: Optional[int] = None
     final_outcome: FinalOutcome
     sentiment: Sentiment
-    transcript_url: Optional[str] = None
 
 
 class CallCreateResponse(BaseModel):

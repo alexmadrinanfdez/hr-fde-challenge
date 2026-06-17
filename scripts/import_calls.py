@@ -140,8 +140,6 @@ def normalize_row(row: dict) -> dict:
     if normalized["sentiment"] not in VALID_SENTIMENTS:
         raise ValueError("sentiment is invalid")
 
-    normalized["transcript_url"] = (row.get("transcript_url") or "").strip() or None
-
     return normalized
 
 
@@ -187,8 +185,7 @@ def upsert_calls(conn, rows):
         agreed_rate,
         negotiation_turns,
         final_outcome,
-        sentiment,
-        transcript_url
+        sentiment
     ) VALUES (
         %(call_id)s,
         %(call_started_at)s,
@@ -203,8 +200,7 @@ def upsert_calls(conn, rows):
         %(agreed_rate)s,
         %(negotiation_turns)s,
         %(final_outcome)s,
-        %(sentiment)s,
-        %(transcript_url)s
+        %(sentiment)s
     )
     ON CONFLICT (call_id) DO UPDATE SET
         call_started_at = EXCLUDED.call_started_at,
@@ -219,8 +215,7 @@ def upsert_calls(conn, rows):
         agreed_rate = EXCLUDED.agreed_rate,
         negotiation_turns = EXCLUDED.negotiation_turns,
         final_outcome = EXCLUDED.final_outcome,
-        sentiment = EXCLUDED.sentiment,
-        transcript_url = EXCLUDED.transcript_url
+        sentiment = EXCLUDED.sentiment
     """
     with conn.cursor() as cur:
         cur.executemany(sql, rows)

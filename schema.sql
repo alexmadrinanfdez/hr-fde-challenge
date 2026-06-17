@@ -47,7 +47,6 @@ CREATE TABLE calls (
             'negative'
         )
     ),
-    transcript_url TEXT,
     CHECK (call_ended_at >= call_started_at)
 );
 
