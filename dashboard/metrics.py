@@ -23,7 +23,7 @@ def label(value):
 def _rate(numerator: int, denominator: int) -> float:
     if denominator == 0:
         return 0.0
-    return round(numerator / denominator, 4)
+    return round(numerator / denominator, 3)
 
 
 def _outcome_count(df: pd.DataFrame, outcome: str) -> int:
@@ -85,7 +85,7 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
         "negotiation_success_rate": _rate(_outcome_count(neg, "booked"), neg_total),
         "negotiation_failed_rate": _rate(_outcome_count(neg, "no_agreement"), neg_total),
         "average_agreed_rate": avg_agreed,
-        "agreed_delta_pct": _rate(avg_agreed - avg_loadboard, avg_loadboard) * 100,
+        "agreed_delta_pct": _rate(100 * (avg_agreed - avg_loadboard), avg_loadboard),
         "average_negotiation_turns": (
             round(calls["negotiation_turns"].dropna().mean(), 2)
             if calls["negotiation_turns"].notna().any()
