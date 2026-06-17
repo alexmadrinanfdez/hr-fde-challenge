@@ -16,12 +16,17 @@ router = APIRouter(tags=["loads"])
     dependencies=[Depends(verify_api_key)],
 )
 def get_loads(
+    load_id: Optional[int] = Query(default=None),
     origin: Optional[str] = Query(default=None),
     destination: Optional[str] = Query(default=None),
     equipment_type: Optional[str] = Query(default=None),
 ):
     filters = []
     params = {}
+
+    if load_id is not None:
+        filters.append("load_id = %(load_id)s")
+        params["load_id"] = load_id
 
     if origin is not None:
         filters.append("origin ILIKE %(origin)s")
