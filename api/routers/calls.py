@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from psycopg.errors import CheckViolation, ForeignKeyViolation, UniqueViolation
 
 from api.auth import verify_api_key
-from api.schemas import CallCreate, CallCreateResponse, CallOut
 from api.db import get_connection
+from api.schemas import CallCreate, CallCreateResponse, CallOut
 
 
 router = APIRouter(tags=["calls"])
@@ -15,31 +15,10 @@ router = APIRouter(tags=["calls"])
     dependencies=[Depends(verify_api_key)],
 )
 def list_calls():
-    query = """
-    SELECT
-        call_id,
-        call_started_at,
-        call_ended_at,
-        mc_number,
-        carrier_authorized,
-        requested_origin,
-        requested_destination,
-        requested_equipment,
-        requested_pickup_window,
-        matched_load_id,
-        agreed_rate,
-        negotiation_turns,
-        final_outcome,
-        sentiment,
-        transcript_url
-    FROM calls
-    ORDER BY call_started_at DESC
-    """
-
     try:
         with get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute(query)
+                cur.execute("SELECT * FROM calls ORDER BY call_started_at DESC")
                 rows = cur.fetchall()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch calls: {e}")
@@ -56,62 +35,23 @@ def list_calls():
 def create_call(payload: CallCreate):
     insert_sql = """
     INSERT INTO calls (
-        call_id,
-        call_started_at,
-        call_ended_at,
-        mc_number,
-        carrier_authorized,
-        requested_origin,
-        requested_destination,
-        requested_equipment,
-        requested_pickup_window,
-        matched_load_id,
-        agreed_rate,
-        negotiation_turns,
-        final_outcome,
-        sentiment,
-        transcript_url
+        call_id, call_started_at, call_ended_at, mc_number, carrier_authorized,
+        requested_origin, requested_destination, requested_equipment,
+        requested_pickup_window, matched_load_id, agreed_rate, negotiation_turns,
+        final_outcome, sentiment, transcript_url
     ) VALUES (
-        %(call_id)s,
-        %(call_started_at)s,
-        %(call_ended_at)s,
-        %(mc_number)s,
-        %(carrier_authorized)s,
-        %(requested_origin)s,
-        %(requested_destination)s,
-        %(requested_equipment)s,
-        %(requested_pickup_window)s,
-        %(matched_load_id)s,
-        %(agreed_rate)s,
-        %(negotiation_turns)s,
-        %(final_outcome)s,
-        %(sentiment)s,
+        %(call_id)s, %(call_started_at)s, %(call_ended_at)s, %(mc_number)s,
+        %(carrier_authorized)s, %(requested_origin)s, %(requested_destination)s,
+        %(requested_equipment)s, %(requested_pickup_window)s, %(matched_load_id)s,
+        %(agreed_rate)s, %(negotiation_turns)s, %(final_outcome)s, %(sentiment)s,
         %(transcript_url)s
     )
     """
 
-    values = {
-        "call_id": payload.call_id,
-        "call_started_at": payload.call_started_at,
-        "call_ended_at": payload.call_ended_at,
-        "mc_number": payload.mc_number,
-        "carrier_authorized": payload.carrier_authorized,
-        "requested_origin": payload.requested_origin,
-        "requested_destination": payload.requested_destination,
-        "requested_equipment": payload.requested_equipment,
-        "requested_pickup_window": payload.requested_pickup_window,
-        "matched_load_id": payload.matched_load_id,
-        "agreed_rate": payload.agreed_rate,
-        "negotiation_turns": payload.negotiation_turns,
-        "final_outcome": payload.final_outcome,
-        "sentiment": payload.sentiment,
-        "transcript_url": payload.transcript_url,
-    }
-
     try:
         with get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute(insert_sql, values)
+                cur.execute(insert_sql, payload.model_dump())
             conn.commit()
     except ForeignKeyViolation:
         raise HTTPException(

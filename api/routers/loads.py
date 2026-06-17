@@ -1,11 +1,10 @@
-from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from api.auth import verify_api_key
-from api.schemas import LoadOut
 from api.db import get_connection
+from api.schemas import LoadOut
 
 
 router = APIRouter(tags=["loads"])
@@ -20,78 +19,25 @@ def get_loads(
     origin: Optional[str] = Query(default=None),
     destination: Optional[str] = Query(default=None),
     equipment_type: Optional[str] = Query(default=None),
-    pickup_datetime: Optional[datetime] = Query(default=None),
-    delivery_datetime: Optional[datetime] = Query(default=None),
-    weight: Optional[float] = Query(default=None),
-    commodity_type: Optional[str] = Query(default=None),
-    num_of_pieces: Optional[int] = Query(default=None),
-    miles: Optional[float] = Query(default=None),
-    dimensions: Optional[str] = Query(default=None),
 ):
     filters = []
     params = {}
 
     if origin is not None:
-        filters.append("LOWER(origin) = LOWER(%(origin)s)")
-        params["origin"] = origin
+        filters.append("origin ILIKE %(origin)s")
+        params["origin"] = f"%{origin}%"
 
     if destination is not None:
-        filters.append("LOWER(destination) = LOWER(%(destination)s)")
-        params["destination"] = destination
+        filters.append("destination ILIKE %(destination)s")
+        params["destination"] = f"%{destination}%"
 
     if equipment_type is not None:
-        filters.append("LOWER(equipment_type) = LOWER(%(equipment_type)s)")
-        params["equipment_type"] = equipment_type
+        filters.append("equipment_type ILIKE %(equipment_type)s")
+        params["equipment_type"] = f"%{equipment_type}%"
 
-    if pickup_datetime is not None:
-        filters.append("pickup_datetime = %(pickup_datetime)s")
-        params["pickup_datetime"] = pickup_datetime
-
-    if delivery_datetime is not None:
-        filters.append("delivery_datetime = %(delivery_datetime)s")
-        params["delivery_datetime"] = delivery_datetime
-
-    if weight is not None:
-        filters.append("weight = %(weight)s")
-        params["weight"] = weight
-
-    if commodity_type is not None:
-        filters.append("LOWER(commodity_type) = LOWER(%(commodity_type)s)")
-        params["commodity_type"] = commodity_type
-
-    if num_of_pieces is not None:
-        filters.append("num_of_pieces = %(num_of_pieces)s")
-        params["num_of_pieces"] = num_of_pieces
-
-    if miles is not None:
-        filters.append("miles = %(miles)s")
-        params["miles"] = miles
-
-    if dimensions is not None:
-        filters.append("LOWER(dimensions) = LOWER(%(dimensions)s)")
-        params["dimensions"] = dimensions
-
-    query = """
-    SELECT
-        load_id,
-        origin,
-        destination,
-        pickup_datetime,
-        delivery_datetime,
-        equipment_type,
-        loadboard_rate,
-        notes,
-        weight,
-        commodity_type,
-        num_of_pieces,
-        miles,
-        dimensions
-    FROM loads
-    """
-
+    query = "SELECT * FROM loads"
     if filters:
         query += " WHERE " + " AND ".join(filters)
-
     query += " ORDER BY pickup_datetime DESC"
 
     try:
