@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, Literal
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 FinalOutcome = Literal[
@@ -34,8 +34,8 @@ class LoadOut(BaseModel):
 
 class CallCreate(BaseModel):
     call_id: str = Field(min_length=1)
-    call_started_at: datetime
-    call_ended_at: datetime
+    call_time: datetime
+    call_duration: int = Field(ge=0)
     mc_number: str = Field(min_length=1)
     carrier_authorized: bool
     requested_origin: Optional[str] = None
@@ -78,17 +78,11 @@ class CallCreate(BaseModel):
             raise ValueError("call_id must not be empty")
         return trimmed
 
-    @model_validator(mode="after")
-    def validate_timestamps(self):
-        if self.call_ended_at < self.call_started_at:
-            raise ValueError("call_ended_at must be >= call_started_at")
-        return self
-
 
 class CallOut(BaseModel):
     call_id: str
-    call_started_at: datetime
-    call_ended_at: datetime
+    call_time: datetime
+    call_duration: int
     mc_number: str
     carrier_authorized: bool
     requested_origin: Optional[str] = None

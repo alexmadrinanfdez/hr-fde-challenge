@@ -1,41 +1,41 @@
-call_id,call_started_at,call_ended_at,mc_number,carrier_authorized,requested_origin,requested_destination,requested_equipment,requested_pickup_window,matched_load_id,agreed_rate,negotiation_turns,final_outcome,sentiment
-f47ac10b-58cc-4372-a567-0e02b2c3d479,2025-06-16 08:12,2025-06-16 08:18,734521,true,Dallas TX,Atlanta GA,Dry Van,2025-06-16,1,2300.00,2,booked,positive
-9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d,2025-06-16 08:35,2025-06-16 08:38,891234,false,,,,,,,,not_verified,neutral
-7c9e6679-7425-40de-944b-e07fc1f90ae7,2025-06-16 09:02,2025-06-16 09:09,456789,true,Los Angeles CA,Dallas TX,Dry Van,2025-06-16,2,2950.00,3,booked,positive
-3fa85f64-5717-4562-b3fc-2c963f66afa6,2025-06-16 09:30,2025-06-16 09:34,312456,true,Chicago IL,Miami FL,Reefer,2025-06-16,,,,no_match,neutral
-1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed,2025-06-16 10:05,2025-06-16 10:12,567890,true,Houston TX,Atlanta GA,Flatbed,2025-06-16,4,,3,no_agreement,negative
-6ba7b810-9dad-41d4-80b5-fc4d0d1e3c27,2025-06-16 10:45,2025-06-16 10:51,678123,true,Atlanta GA,Miami FL,Dry Van,2025-06-16,5,1400.00,1,booked,positive
-a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11,2025-06-16 11:20,2025-06-16 11:23,999888,false,,,,,,,,not_verified,neutral
-b2c3d4e5-6f7a-4b8c-9d0e-1f2a3b4c5d6e,2025-06-16 11:55,2025-06-16 11:58,234567,true,Denver CO,Salt Lake City UT,Dry Van,2025-06-17,,,,no_match,neutral
-c3d4e5f6-7a8b-4c9d-0e1f-2a3b4c5d6e7f,2025-06-16 13:10,2025-06-16 13:16,456789,true,Dallas TX,Chicago IL,Reefer,2025-06-17,7,2450.00,2,booked,positive
-d4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8a,2025-06-16 14:00,2025-06-16 14:03,345678,true,Savannah GA,Atlanta GA,Dry Van,2025-06-16,6,650.00,1,booked,positive
-e5f6a7b8-9c0d-4e1f-2a3b-4c5d6e7f8a9b,2025-06-17 07:30,2025-06-17 07:33,123456,true,Los Angeles CA,Phoenix AZ,Flatbed,2025-06-17,10,950.00,1,booked,positive
-f6a7b8c9-0d1e-4f2a-3b4c-5d6e7f8a9b0c,2025-06-17 08:15,2025-06-17 08:21,789012,true,Seattle WA,Los Angeles CA,Reefer,2025-06-17,12,,3,no_agreement,negative
-a7b8c9d0-1e2f-4a3b-4c5d-6e7f8a9b0c1d,2025-06-17 08:50,2025-06-17 08:53,654321,true,Chicago IL,Atlanta GA,Dry Van,2025-06-17,9,1850.00,2,booked,positive
-b8c9d0e1-2f3a-4b4c-5d6e-7f8a9b0c1d2e,2025-06-17 09:30,2025-06-17 09:33,432198,true,New York NY,Philadelphia PA,Dry Van,2025-06-17,13,450.00,1,booked,positive
-c9d0e1f2-3a4b-4c5d-6e7f-8a9b0c1d2e3f,2025-06-17 10:05,2025-06-17 10:08,876543,true,Atlanta GA,Nashville TN,Dry Van,2025-06-17,,,,no_match,neutral
-d0e1f2a3-4b5c-4d6e-7f8a-9b0c1d2e3f4a,2025-06-17 10:40,2025-06-17 10:44,234567,true,Memphis TN,Dallas TX,Dry Van,2025-06-17,11,1500.00,2,booked,positive
-e1f2a3b4-5c6d-4e7f-8a9b-0c1d2e3f4a5b,2025-06-17 11:15,2025-06-17 11:18,567890,true,Houston TX,Dallas TX,Dry Van,2025-06-17,14,,0,not_interested,negative
-f2a3b4c5-6d7e-4f8a-9b0c-1d2e3f4a5b6c,2025-06-17 13:00,2025-06-17 13:03,111222,false,,,,,,,,not_verified,neutral
-a3b4c5d6-7e8f-4a9b-0c1d-2e3f4a5b6c7d,2025-06-17 14:20,2025-06-17 14:26,345678,true,Laredo TX,Dallas TX,Dry Van,2025-06-17,8,1050.00,2,booked,positive
-b4c5d6e7-8f9a-4b0c-1d2e-3f4a5b6c7d8e,2025-06-17 15:00,2025-06-17 15:02,987654,true,Chicago IL,Detroit MI,Dry Van,2025-06-18,17,650.00,1,booked,positive
-c5d6e7f8-9a0b-4c1d-2e3f-4a5b6c7d8e9f,2025-06-18 07:10,2025-06-18 07:16,456789,true,Los Angeles CA,San Francisco CA,Reefer,2025-06-18,18,,3,no_agreement,negative
-d6e7f8a9-0b1c-4d2e-3f4a-5b6c7d8e9f0a,2025-06-18 07:45,2025-06-18 07:48,734521,true,Dallas TX,Houston TX,Flatbed,2025-06-18,16,700.00,1,booked,positive
-e7f8a9b0-1c2d-4e3f-4a5b-6c7d8e9f0a1b,2025-06-18 08:30,2025-06-18 08:35,678123,true,Kansas City MO,Chicago IL,Dry Van,2025-06-18,19,850.00,2,booked,positive
-f8a9b0c1-2d3e-4f4a-5b6c-7d8e9f0a1b2c,2025-06-18 09:15,2025-06-18 09:18,312456,true,Jacksonville FL,Savannah GA,Dry Van,2025-06-18,20,500.00,1,booked,positive
-a9b0c1d2-3e4f-4a5b-6c7d-8e9f0a1b2c3d,2025-06-18 09:50,2025-06-18 09:53,891234,true,Atlanta GA,Charlotte NC,Dry Van,2025-06-18,15,,0,not_interested,neutral
-b0c1d2e3-4f5a-4b6c-7d8e-9f0a1b2c3d4e,2025-06-18 10:30,2025-06-18 10:36,567890,true,Dallas TX,Memphis TN,Dry Van,2025-06-18,21,1050.00,2,booked,positive
-c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f,2025-06-18 11:00,2025-06-18 11:02,444555,true,Portland OR,Seattle WA,Reefer,2025-06-18,,,,no_match,neutral
-d2e3f4a5-6b7c-4d8e-9f0a-1b2c3d4e5f6a,2025-06-18 14:00,2025-06-18 14:03,234567,true,Chicago IL,Minneapolis MN,Dry Van,2025-06-19,25,1250.00,2,booked,positive
-e3f4a5b6-7c8d-4e9f-0a1b-2c3d4e5f6a7b,2025-06-19 07:20,2025-06-19 07:26,789012,true,Los Angeles CA,Denver CO,Dry Van,2025-06-19,27,,3,no_agreement,negative
-f4a5b6c7-8d9e-4f0a-1b2c-3d4e5f6a7b8c,2025-06-19 08:00,2025-06-19 08:06,456789,true,Miami FL,Atlanta GA,Reefer,2025-06-19,28,1600.00,2,booked,positive
-a5b6c7d8-9e0f-4a1b-2c3d-4e5f6a7b8c9d,2025-06-19 08:40,2025-06-19 08:43,654321,true,Laredo TX,Houston TX,Dry Van,2025-06-19,26,900.00,1,booked,positive
-b6c7d8e9-0f1a-4b2c-3d4e-5f6a7b8c9d0e,2025-06-19 09:15,2025-06-19 09:18,876543,true,Houston TX,New Orleans LA,Flatbed,2025-06-19,24,,0,not_interested,neutral
-c7d8e9f0-1a2b-4c3d-4e5f-6a7b8c9d0e1f,2025-06-19 10:00,2025-06-19 10:03,333444,false,,,,,,,,not_verified,neutral
-d8e9f0a1-2b3c-4d4e-5f6a-7b8c9d0e1f2a,2025-06-19 10:45,2025-06-19 10:51,734521,true,Atlanta GA,Jacksonville FL,Reefer,2025-06-19,23,1000.00,2,booked,positive
-e9f0a1b2-3c4d-4e5f-6a7b-8c9d0e1f2a3b,2025-06-19 11:30,2025-06-19 11:33,345678,true,San Antonio TX,Laredo TX,Dry Van,2025-06-19,29,450.00,1,booked,positive
-f0a1b2c3-4d5e-4f6a-7b8c-9d0e1f2a3b4c,2025-06-19 13:00,2025-06-19 13:02,567890,true,Phoenix AZ,Los Angeles CA,Dry Van,2025-06-19,22,,0,not_interested,negative
-a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d,2025-06-19 14:00,2025-06-19 14:06,123456,true,Charlotte NC,New York NY,Dry Van,2025-06-20,30,1700.00,2,booked,positive
-b2c3d4e5-6f7a-4b8c-9d0e-1f2a3b4c5d6f,2025-06-19 14:45,2025-06-19 14:48,987654,true,Dallas TX,Atlanta GA,Dry Van,2025-06-20,,,,incomplete,neutral
-c3d4e5f6-7a8b-4c9d-0e1f-2a3b4c5d6e7a,2025-06-19 15:30,2025-06-19 15:33,222333,true,Nashville TN,Memphis TN,Dry Van,2025-06-20,,,,no_match,neutral
-d4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8b,2025-06-20 07:00,2025-06-20 07:05,456789,true,Chicago IL,New York NY,Reefer,2025-06-20,3,2650.00,2,booked,positive
+call_id,call_time,call_duration,mc_number,carrier_authorized,requested_origin,requested_destination,requested_equipment,requested_pickup_window,matched_load_id,agreed_rate,negotiation_turns,final_outcome,sentiment
+f47ac10b-58cc-4372-a567-0e02b2c3d479,2025-06-16 08:12,360,734521,true,Dallas TX,Atlanta GA,Dry Van,2025-06-16,1,2300.00,2,booked,positive
+9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d,2025-06-16 08:35,180,891234,false,,,,,,,,not_verified,neutral
+7c9e6679-7425-40de-944b-e07fc1f90ae7,2025-06-16 09:02,420,456789,true,Los Angeles CA,Dallas TX,Dry Van,2025-06-16,2,2950.00,3,booked,positive
+3fa85f64-5717-4562-b3fc-2c963f66afa6,2025-06-16 09:30,240,312456,true,Chicago IL,Miami FL,Reefer,2025-06-16,,,,no_match,neutral
+1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed,2025-06-16 10:05,420,567890,true,Houston TX,Atlanta GA,Flatbed,2025-06-16,4,,3,no_agreement,negative
+6ba7b810-9dad-41d4-80b5-fc4d0d1e3c27,2025-06-16 10:45,360,678123,true,Atlanta GA,Miami FL,Dry Van,2025-06-16,5,1400.00,1,booked,positive
+a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11,2025-06-16 11:20,180,999888,false,,,,,,,,not_verified,neutral
+b2c3d4e5-6f7a-4b8c-9d0e-1f2a3b4c5d6e,2025-06-16 11:55,180,234567,true,Denver CO,Salt Lake City UT,Dry Van,2025-06-17,,,,no_match,neutral
+c3d4e5f6-7a8b-4c9d-0e1f-2a3b4c5d6e7f,2025-06-16 13:10,360,456789,true,Dallas TX,Chicago IL,Reefer,2025-06-17,7,2450.00,2,booked,positive
+d4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8a,2025-06-16 14:00,180,345678,true,Savannah GA,Atlanta GA,Dry Van,2025-06-16,6,650.00,1,booked,positive
+e5f6a7b8-9c0d-4e1f-2a3b-4c5d6e7f8a9b,2025-06-17 07:30,180,123456,true,Los Angeles CA,Phoenix AZ,Flatbed,2025-06-17,10,950.00,1,booked,positive
+f6a7b8c9-0d1e-4f2a-3b4c-5d6e7f8a9b0c,2025-06-17 08:15,360,789012,true,Seattle WA,Los Angeles CA,Reefer,2025-06-17,12,,3,no_agreement,negative
+a7b8c9d0-1e2f-4a3b-4c5d-6e7f8a9b0c1d,2025-06-17 08:50,180,654321,true,Chicago IL,Atlanta GA,Dry Van,2025-06-17,9,1850.00,2,booked,positive
+b8c9d0e1-2f3a-4b4c-5d6e-7f8a9b0c1d2e,2025-06-17 09:30,180,432198,true,New York NY,Philadelphia PA,Dry Van,2025-06-17,13,450.00,1,booked,positive
+c9d0e1f2-3a4b-4c5d-6e7f-8a9b0c1d2e3f,2025-06-17 10:05,180,876543,true,Atlanta GA,Nashville TN,Dry Van,2025-06-17,,,,no_match,neutral
+d0e1f2a3-4b5c-4d6e-7f8a-9b0c1d2e3f4a,2025-06-17 10:40,240,234567,true,Memphis TN,Dallas TX,Dry Van,2025-06-17,11,1500.00,2,booked,positive
+e1f2a3b4-5c6d-4e7f-8a9b-0c1d2e3f4a5b,2025-06-17 11:15,180,567890,true,Houston TX,Dallas TX,Dry Van,2025-06-17,14,,0,not_interested,negative
+f2a3b4c5-6d7e-4f8a-9b0c-1d2e3f4a5b6c,2025-06-17 13:00,180,111222,false,,,,,,,,not_verified,neutral
+a3b4c5d6-7e8f-4a9b-0c1d-2e3f4a5b6c7d,2025-06-17 14:20,360,345678,true,Laredo TX,Dallas TX,Dry Van,2025-06-17,8,1050.00,2,booked,positive
+b4c5d6e7-8f9a-4b0c-1d2e-3f4a5b6c7d8e,2025-06-17 15:00,120,987654,true,Chicago IL,Detroit MI,Dry Van,2025-06-18,17,650.00,1,booked,positive
+c5d6e7f8-9a0b-4c1d-2e3f-4a5b6c7d8e9f,2025-06-18 07:10,360,456789,true,Los Angeles CA,San Francisco CA,Reefer,2025-06-18,18,,3,no_agreement,negative
+d6e7f8a9-0b1c-4d2e-3f4a-5b6c7d8e9f0a,2025-06-18 07:45,180,734521,true,Dallas TX,Houston TX,Flatbed,2025-06-18,16,700.00,1,booked,positive
+e7f8a9b0-1c2d-4e3f-4a5b-6c7d8e9f0a1b,2025-06-18 08:30,300,678123,true,Kansas City MO,Chicago IL,Dry Van,2025-06-18,19,850.00,2,booked,positive
+f8a9b0c1-2d3e-4f4a-5b6c-7d8e9f0a1b2c,2025-06-18 09:15,180,312456,true,Jacksonville FL,Savannah GA,Dry Van,2025-06-18,20,500.00,1,booked,positive
+a9b0c1d2-3e4f-4a5b-6c7d-8e9f0a1b2c3d,2025-06-18 09:50,180,891234,true,Atlanta GA,Charlotte NC,Dry Van,2025-06-18,15,,0,not_interested,neutral
+b0c1d2e3-4f5a-4b6c-7d8e-9f0a1b2c3d4e,2025-06-18 10:30,360,567890,true,Dallas TX,Memphis TN,Dry Van,2025-06-18,21,1050.00,2,booked,positive
+c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f,2025-06-18 11:00,120,444555,true,Portland OR,Seattle WA,Reefer,2025-06-18,,,,no_match,neutral
+d2e3f4a5-6b7c-4d8e-9f0a-1b2c3d4e5f6a,2025-06-18 14:00,180,234567,true,Chicago IL,Minneapolis MN,Dry Van,2025-06-19,25,1250.00,2,booked,positive
+e3f4a5b6-7c8d-4e9f-0a1b-2c3d4e5f6a7b,2025-06-19 07:20,360,789012,true,Los Angeles CA,Denver CO,Dry Van,2025-06-19,27,,3,no_agreement,negative
+f4a5b6c7-8d9e-4f0a-1b2c-3d4e5f6a7b8c,2025-06-19 08:00,360,456789,true,Miami FL,Atlanta GA,Reefer,2025-06-19,28,1600.00,2,booked,positive
+a5b6c7d8-9e0f-4a1b-2c3d-4e5f6a7b8c9d,2025-06-19 08:40,180,654321,true,Laredo TX,Houston TX,Dry Van,2025-06-19,26,900.00,1,booked,positive
+b6c7d8e9-0f1a-4b2c-3d4e-5f6a7b8c9d0e,2025-06-19 09:15,180,876543,true,Houston TX,New Orleans LA,Flatbed,2025-06-19,24,,0,not_interested,neutral
+c7d8e9f0-1a2b-4c3d-4e5f-6a7b8c9d0e1f,2025-06-19 10:00,180,333444,false,,,,,,,,not_verified,neutral
+d8e9f0a1-2b3c-4d4e-5f6a-7b8c9d0e1f2a,2025-06-19 10:45,360,734521,true,Atlanta GA,Jacksonville FL,Reefer,2025-06-19,23,1000.00,2,booked,positive
+e9f0a1b2-3c4d-4e5f-6a7b-8c9d0e1f2a3b,2025-06-19 11:30,180,345678,true,San Antonio TX,Laredo TX,Dry Van,2025-06-19,29,450.00,1,booked,positive
+f0a1b2c3-4d5e-4f6a-7b8c-9d0e1f2a3b4c,2025-06-19 13:00,120,567890,true,Phoenix AZ,Los Angeles CA,Dry Van,2025-06-19,22,,0,not_interested,negative
+a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d,2025-06-19 14:00,360,123456,true,Charlotte NC,New York NY,Dry Van,2025-06-20,30,1700.00,2,booked,positive
+b2c3d4e5-6f7a-4b8c-9d0e-1f2a3b4c5d6f,2025-06-19 14:45,180,987654,true,Dallas TX,Atlanta GA,Dry Van,2025-06-20,,,,incomplete,neutral
+c3d4e5f6-7a8b-4c9d-0e1f-2a3b4c5d6e7a,2025-06-19 15:30,180,222333,true,Nashville TN,Memphis TN,Dry Van,2025-06-20,,,,no_match,neutral
+d4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8b,2025-06-20 07:00,300,456789,true,Chicago IL,New York NY,Reefer,2025-06-20,3,2650.00,2,booked,positive

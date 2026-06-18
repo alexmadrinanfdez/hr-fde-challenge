@@ -22,9 +22,9 @@ st.caption("Operational analytics for inbound carrier call performance and freig
 def load_data():
     calls = pd.DataFrame(get_calls())
     loads = pd.DataFrame(get_loads())
-    calls["call_started_at"] = pd.to_datetime(calls["call_started_at"])
-    calls["call_ended_at"] = pd.to_datetime(calls["call_ended_at"])
+    calls["call_time"] = pd.to_datetime(calls["call_time"])
     calls["carrier_authorized"] = calls["carrier_authorized"].astype(bool)
+    calls["call_duration"] = pd.to_numeric(calls["call_duration"], errors="coerce")
     calls["agreed_rate"] = pd.to_numeric(calls["agreed_rate"], errors="coerce")
     calls["negotiation_turns"] = pd.to_numeric(calls["negotiation_turns"], errors="coerce")
     return calls, loads
@@ -34,8 +34,8 @@ calls_raw, loads = load_data()
 
 # Date range filter
 st.sidebar.header("Filters")
-min_date = calls_raw["call_started_at"].min().date()
-max_date = calls_raw["call_started_at"].max().date()
+min_date = calls_raw["call_time"].min().date()
+max_date = calls_raw["call_time"].max().date()
 
 date_range = st.sidebar.date_input(
     "Date range",
@@ -47,8 +47,8 @@ date_range = st.sidebar.date_input(
 if len(date_range) == 2:
     start, end = date_range
     calls = calls_raw[
-        (calls_raw["call_started_at"].dt.date >= start)
-        & (calls_raw["call_started_at"].dt.date <= end)
+        (calls_raw["call_time"].dt.date >= start)
+        & (calls_raw["call_time"].dt.date <= end)
     ]
 else:
     calls = calls_raw

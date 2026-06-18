@@ -18,7 +18,7 @@ def list_calls():
     try:
         with get_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT * FROM calls ORDER BY call_started_at DESC")
+                cur.execute("SELECT * FROM calls ORDER BY call_time DESC")
                 rows = cur.fetchall()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch calls: {e}")
@@ -35,12 +35,12 @@ def list_calls():
 def create_call(payload: CallCreate):
     insert_sql = """
     INSERT INTO calls (
-        call_id, call_started_at, call_ended_at, mc_number, carrier_authorized,
+        call_id, call_time, call_duration, mc_number, carrier_authorized,
         requested_origin, requested_destination, requested_equipment,
         requested_pickup_window, matched_load_id, agreed_rate, negotiation_turns,
         final_outcome, sentiment
     ) VALUES (
-        %(call_id)s, %(call_started_at)s, %(call_ended_at)s, %(mc_number)s,
+        %(call_id)s, %(call_time)s, %(call_duration)s, %(mc_number)s,
         %(carrier_authorized)s, %(requested_origin)s, %(requested_destination)s,
         %(requested_equipment)s, %(requested_pickup_window)s, %(matched_load_id)s,
         %(agreed_rate)s, %(negotiation_turns)s, %(final_outcome)s, %(sentiment)s

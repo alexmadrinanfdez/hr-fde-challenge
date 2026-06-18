@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 
 REQUIRED_COLUMNS = [
     "call_id",
-    "call_started_at",
-    "call_ended_at",
+    "call_time",
+    "call_duration",
     "mc_number",
     "carrier_authorized",
     "final_outcome",
@@ -116,13 +116,10 @@ def normalize_row(row: dict) -> dict:
     normalized = {}
 
     normalized["call_id"] = require_non_empty(row, "call_id")
-    normalized["call_started_at"] = parse_iso_datetime(require_non_empty(row, "call_started_at"))
-    normalized["call_ended_at"] = parse_iso_datetime(require_non_empty(row, "call_ended_at"))
+    normalized["call_time"] = parse_iso_datetime(require_non_empty(row, "call_time"))
+    normalized["call_duration"] = parse_int(row.get("call_duration"), "call_duration", required=True)
     normalized["mc_number"] = require_non_empty(row, "mc_number")
     normalized["carrier_authorized"] = parse_bool(row.get("carrier_authorized"), "carrier_authorized")
-
-    if normalized["call_ended_at"] < normalized["call_started_at"]:
-        raise ValueError("call_ended_at must be >= call_started_at")
 
     normalized["requested_origin"] = (row.get("requested_origin") or "").strip() or None
     normalized["requested_destination"] = (row.get("requested_destination") or "").strip() or None
@@ -155,15 +152,14 @@ def shift_call_datetimes(rows: list[dict], anchor_offset_hours: int) -> list[dic
     if not rows:
         return rows
 
-    earliest_start = min(row["call_started_at"] for row in rows)
+    earliest_start = min(row["call_time"] for row in rows)
     target_anchor = datetime.now(timezone.utc) + timedelta(hours=anchor_offset_hours)
     delta = target_anchor - earliest_start
 
     shifted_rows = []
     for row in rows:
         shifted = dict(row)
-        shifted["call_started_at"] = row["call_started_at"] + delta
-        shifted["call_ended_at"] = row["call_ended_at"] + delta
+        shifted["call_time"] = row["call_time"] + delta
         shifted_rows.append(shifted)
 
     return shifted_rows
@@ -173,8 +169,8 @@ def upsert_calls(conn, rows):
     sql = """
     INSERT INTO calls (
         call_id,
-        call_started_at,
-        call_ended_at,
+        call_time,
+        call_duration,
         mc_number,
         carrier_authorized,
         requested_origin,
@@ -188,8 +184,8 @@ def upsert_calls(conn, rows):
         sentiment
     ) VALUES (
         %(call_id)s,
-        %(call_started_at)s,
-        %(call_ended_at)s,
+        %(call_time)s,
+        %(call_duration)s,
         %(mc_number)s,
         %(carrier_authorized)s,
         %(requested_origin)s,
@@ -203,8 +199,8 @@ def upsert_calls(conn, rows):
         %(sentiment)s
     )
     ON CONFLICT (call_id) DO UPDATE SET
-        call_started_at = EXCLUDED.call_started_at,
-        call_ended_at = EXCLUDED.call_ended_at,
+        call_time = EXCLUDED.call_time,
+        call_duration = EXCLUDED.call_duration,
         mc_number = EXCLUDED.mc_number,
         carrier_authorized = EXCLUDED.carrier_authorized,
         requested_origin = EXCLUDED.requested_origin,

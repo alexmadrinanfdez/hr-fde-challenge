@@ -32,11 +32,7 @@ def _outcome_count(df: pd.DataFrame, outcome: str) -> int:
 
 def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
     total = len(calls)
-
     calls = calls.copy()
-    calls["duration_seconds"] = (
-        calls["call_ended_at"] - calls["call_started_at"]
-    ).dt.total_seconds()
 
     matched = calls[calls["matched_load_id"].notna()].merge(
         loads, left_on="matched_load_id", right_on="load_id", how="inner"
@@ -132,21 +128,21 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
     # Facility by hour
     def facility_by_hour(key):
         df = booked.copy()
-        df["hour_of_day"] = df["call_started_at"].dt.hour
+        df["hour_of_day"] = df["call_time"].dt.hour
         pivot = df.pivot_table(
             index=key, columns="hour_of_day", values="call_id", aggfunc="count", fill_value=0
         )
         return pivot.reindex(columns=range(24), fill_value=0).map(lambda v: v > 0)
 
     # Calls per hour
-    calls_per_hour = calls.groupby(calls["call_started_at"].dt.hour).size()
+    calls_per_hour = calls.groupby(calls["call_time"].dt.hour).size()
     calls_per_hour = calls_per_hour.reindex(range(24), fill_value=0)
     calls_per_hour.index.name = "hour_of_day"
     calls_per_hour = calls_per_hour.to_frame(name="call_count")
 
     # Duration by outcome
     duration_by_outcome = (
-        calls.groupby("final_outcome")["duration_seconds"]
+        calls.groupby("final_outcome")["call_duration"]
         .mean().round(2)
         .to_frame(name="average_call_duration_seconds")
     )
@@ -165,5 +161,5 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
         "destination_by_hour": facility_by_hour("destination"),
         "calls_per_hour": calls_per_hour,
         "duration_by_outcome": duration_by_outcome,
-        "recent_calls": calls.drop(columns=["duration_seconds"]).head(100),
+        "recent_calls": calls.head(100),
     }

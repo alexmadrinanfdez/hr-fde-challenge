@@ -19,8 +19,8 @@ CREATE TABLE loads (
 -- Calls table
 CREATE TABLE calls (
     call_id TEXT PRIMARY KEY,
-    call_started_at TIMESTAMPTZ NOT NULL,
-    call_ended_at TIMESTAMPTZ NOT NULL,
+    call_time TIMESTAMPTZ NOT NULL,
+    call_duration INTEGER NOT NULL CHECK (call_duration >= 0),
     mc_number TEXT NOT NULL,
     carrier_authorized BOOLEAN NOT NULL,
     requested_origin TEXT,
@@ -46,13 +46,12 @@ CREATE TABLE calls (
             'neutral',
             'negative'
         )
-    ),
-    CHECK (call_ended_at >= call_started_at)
+    )
 );
 
 -- Indexes
-CREATE INDEX idx_loads_origin ON loads (LOWER(origin));
-CREATE INDEX idx_loads_destination ON loads (LOWER(destination));
+CREATE INDEX idx_loads_origin ON loads USING btree (origin);
+CREATE INDEX idx_loads_destination ON loads USING btree (destination);
 
 CREATE INDEX idx_calls_mc_number ON calls (mc_number);
-CREATE INDEX idx_calls_started_at ON calls (call_started_at);
+CREATE INDEX idx_calls_call_time ON calls (call_time);
