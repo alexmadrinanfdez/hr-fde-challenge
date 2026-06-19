@@ -10,23 +10,37 @@ from api.schemas import LoadOut
 router = APIRouter(tags=["loads"])
 
 
+def _param(value: Optional[str]) -> Optional[str]:
+    if value is not None and value.strip() == "":
+        return None
+    return value
+
+
 @router.get(
     "/loads",
     response_model=list[LoadOut],
     dependencies=[Depends(verify_api_key)],
 )
 def get_loads(
-    load_id: Optional[int] = Query(default=None),
+    load_id: Optional[str] = Query(default=None),
     origin: Optional[str] = Query(default=None),
     destination: Optional[str] = Query(default=None),
     equipment_type: Optional[str] = Query(default=None),
 ):
+    load_id = _param(load_id)
+    origin = _param(origin)
+    destination = _param(destination)
+    equipment_type = _param(equipment_type)
+
     filters = []
     params = {}
 
     if load_id is not None:
+        try:
+            params["load_id"] = int(load_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="load_id must be an integer")
         filters.append("load_id = %(load_id)s")
-        params["load_id"] = load_id
 
     if origin is not None:
         filters.append("origin ILIKE %(origin)s")

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 FinalOutcome = Literal[
@@ -14,6 +14,12 @@ FinalOutcome = Literal[
 ]
 
 Sentiment = Literal["positive", "neutral", "negative"]
+
+
+def _empty_to_none(v):
+    if isinstance(v, str) and v.strip() == "":
+        return None
+    return v
 
 
 class LoadOut(BaseModel):
@@ -47,6 +53,13 @@ class CallCreate(BaseModel):
     negotiation_turns: Optional[int] = None
     final_outcome: FinalOutcome
     sentiment: Sentiment
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_empty_strings(cls, data):
+        if isinstance(data, dict):
+            return {k: _empty_to_none(v) for k, v in data.items()}
+        return data
 
     @field_validator("agreed_rate")
     @classmethod
