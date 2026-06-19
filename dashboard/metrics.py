@@ -67,13 +67,13 @@ def compute(calls: pd.DataFrame, loads: pd.DataFrame) -> dict:
     neg_total = len(neg)
 
     avg_agreed = (
-        round(calls["agreed_rate"].dropna().mean(), 2)
-        if calls["agreed_rate"].notna().any()
+        round(booked["agreed_rate"].dropna().mean(), 2)
+        if booked["agreed_rate"].notna().any()
         else 0.0
     )
     avg_loadboard = (
-        round(matched["loadboard_rate"].dropna().mean(), 2)
-        if "loadboard_rate" in matched.columns and matched["loadboard_rate"].notna().any()
+        round(booked["loadboard_rate"].dropna().mean(), 2)
+        if booked["loadboard_rate"].notna().any()
         else None
     )
 
