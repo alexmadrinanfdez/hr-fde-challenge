@@ -153,7 +153,7 @@ def shift_call_datetimes(rows: list[dict], anchor_offset_hours: int) -> list[dic
         return rows
 
     earliest_start = min(row["call_time"] for row in rows)
-    target_anchor = datetime.now(timezone.utc) + timedelta(hours=anchor_offset_hours)
+    target_anchor = datetime.now(timezone.utc).replace(microsecond=0) + timedelta(hours=anchor_offset_hours)
     delta = target_anchor - earliest_start
 
     shifted_rows = []
