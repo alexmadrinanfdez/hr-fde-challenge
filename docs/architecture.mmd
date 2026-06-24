@@ -1,0 +1,46 @@
+flowchart TD
+    %% External
+    Carrier(["📞 Carrier calls in"])
+
+    %% HappyRobot
+    subgraph HappyRobot["HappyRobot (Voice AI)"]
+        Agent["AI Agent"]
+        FMCSA["FMCSA Verify Tool"]
+        LoadSearch["Load Search Tool"]
+        PostCall["Post-Call Webhook"]
+    end
+
+    %% Backend
+    subgraph Backend["FastAPI Backend"]
+        API["REST API"]
+        AuthMW["API Key Auth"]
+    end
+
+    %% Data
+    subgraph Data["PostgreSQL"]
+        LoadsTable[("loads")]
+        CallsTable[("calls")]
+    end
+
+    %% Dashboard
+    subgraph Dashboard["Streamlit Dashboard"]
+        Metrics["Metrics Engine"]
+        UI["Interactive UI"]
+    end
+
+    %% Flow
+    Carrier -->|"Inbound call"| Agent
+    Agent -->|"Verify MC#"| FMCSA
+    FMCSA -->|"GET /carrier/verify"| API
+    Agent -->|"Find loads"| LoadSearch
+    LoadSearch -->|"GET /loads"| API
+    Agent -->|"Call ends"| PostCall
+    PostCall -->|"POST /calls"| API
+
+    API --> AuthMW
+    AuthMW -->|"Read"| LoadsTable
+    AuthMW -->|"Write"| CallsTable
+
+    LoadsTable -->|"Query"| Metrics
+    CallsTable -->|"Query"| Metrics
+    Metrics --> UI
