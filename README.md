@@ -1,18 +1,78 @@
 # Inbound Carrier Sales
 
-Backend API and reporting dashboard for inbound carrier call performance and freight matching.
+AI-powered system using [HappyRobot](https://www.happyrobot.ai/) voice AI to handle carrier calls, verify authorities, match loads, negotiate rates, and log structured call records — backed by a FastAPI service and a Streamlit analytics dashboard.
 
 ## Project Structure
 
 ```text
 api/           API (FastAPI)
 dashboard/     Reporting dashboard (Streamlit)
-scripts/       CSV import scripts
 data/          Seed CSV files
+scripts/       CSV import scripts
 schema.sql     PostgreSQL schema
 ```
 
-## API Endpoints
+## How It Works
+
+1. A carrier calls the HappyRobot phone number.
+2. The AI agent verifies the carrier's MC number against FMCSA via the backend API.
+3. The agent asks for lane preferences and searches available loads.
+4. If a match is found, the agent negotiates a rate (up to 3 turns).
+5. When the call ends, a post-call webhook saves the structured call record to the database.
+6. The Streamlit dashboard provides real-time analytics on call performance and outcomes.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    %% External
+    Carrier(["📞 Carrier calls in"])
+
+    %% HappyRobot
+    subgraph HappyRobot["HappyRobot (Voice AI)"]
+        Agent["AI Agent"]
+        FMCSA["FMCSA Verify Tool"]
+        LoadSearch["Load Search Tool"]
+        PostCall["Post-Call Webhook"]
+    end
+
+    %% Backend
+    subgraph Backend["FastAPI Backend"]
+        API["REST API"]
+        AuthMW["API Key Auth"]
+    end
+
+    %% Data
+    subgraph Data["PostgreSQL"]
+        LoadsTable[("loads")]
+        CallsTable[("calls")]
+    end
+
+    %% Dashboard
+    subgraph Dashboard["Streamlit Dashboard"]
+        Metrics["Metrics Engine"]
+        UI["Interactive UI"]
+    end
+
+    %% Flow
+    Carrier -->|"Inbound call"| Agent
+    Agent -->|"Verify MC#"| FMCSA
+    FMCSA -->|"GET /carriers/{mc}/verify"| API
+    Agent -->|"Find loads"| LoadSearch
+    LoadSearch -->|"GET /loads"| API
+    Agent -->|"Call ends"| PostCall
+    PostCall -->|"POST /calls"| API
+
+    API --> AuthMW
+    AuthMW -->|"Read"| LoadsTable
+    AuthMW -->|"Write"| CallsTable
+
+    LoadsTable -->|"Query"| Metrics
+    CallsTable -->|"Query"| Metrics
+    Metrics --> UI
+```
+
+### API Endpoints
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
@@ -22,7 +82,15 @@ schema.sql     PostgreSQL schema
 | POST | `/calls` | API key | Record a call |
 | GET | `/carriers/{mc_number}/verify` | API key | Verify carrier authority via FMCSA |
 
-Pass `X-Api-Key` header for protected endpoints. 
+Pass `X-Api-Key` header for protected endpoints.
+
+### Dashboard Metrics
+
+- **Core Funnel** — Total calls → Authorized → Load matched → Booked
+- **Negotiation** — Success rate, average turns, agreed rate vs. loadboard
+- **Sentiment** — Distribution and breakdown by outcome
+- **Facility Usage** — Origin/destination volumes and transfer rates
+- **Operational** — Calls per hour, average duration by outcome
 
 ## Setup
 
@@ -120,3 +188,5 @@ Docker Compose reads from `.env` in the project root via `env_file`. Set all var
 - Import scripts shift timestamps using configurable anchor offsets to keep demo data current.
 - Run Streamlit with `python -m streamlit` to avoid import path issues.
 - A `render.yaml` blueprint is included for one-click deployment to [Render](https://render.com).
+- [MIT license](LICENSE).
+- Integrates with [HappyRobot](https://www.happyrobot.ai/), a proprietary AI platform. Use of HappyRobot is subject to their own terms of service and is not covered by this project's MIT license.
