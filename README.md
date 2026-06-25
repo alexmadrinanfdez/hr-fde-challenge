@@ -185,6 +185,7 @@ Docker Compose reads from `.env` in the project root via `env_file`. Set all var
 
 ## Notes
 
+- A short demo video is available at `docs/demo.mov`. To be able to download it, you will need [Git LFS](https://git-lfs.com).
 - Import scripts shift timestamps using configurable anchor offsets to keep demo data current.
 - Run Streamlit with `python -m streamlit` to avoid import path issues.
 - A `render.yaml` blueprint is included for one-click deployment to [Render](https://render.com).
